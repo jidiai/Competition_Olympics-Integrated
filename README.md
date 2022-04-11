@@ -3,7 +3,7 @@
 ---
 ## Environment
 
-<img src=https://github.com/jidiai/Competition_Olympics-Curling/blob/main/olympics_engine/assets/multi-task-olympics.gif width=600>
+<img src=https://github.com/jidiai/Competition_Olympics-Integrated/blob/main/olympics_engine/assets/multi-task-olympics.gif width=600>
 
 
 Check details in Jidi Competition [IJCAI-ECAI 2022 AI Qlympics Competition](http://www.jidiai.cn/compete_detail?compete=17)
