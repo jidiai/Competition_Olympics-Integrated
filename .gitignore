@@ -1,0 +1,8 @@
+# Default ignored files
+.idea*
+*/__pycache__/*
+*/*/__pycache__/*
+logs/
+olympics_engine/__pycache__/
+olympics_engine/scenario/__pycache__/
+olympics_engine/test/.pytest_cache/
