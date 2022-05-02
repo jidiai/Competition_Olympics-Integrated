@@ -54,38 +54,8 @@ IDX_TO_COLOR = {
 grid_node_width = 2     #for view drawing
 grid_node_height = 2
 
+from olympics_engine.tools.func import closest_point, distance_to_line
 
-def closest_point(l1, l2, point):
-    """
-    compute the coordinate of point on the line l1l2 closest to the given point, reference: https://en.wikipedia.org/wiki/Cramer%27s_rule
-    :param l1: start pos
-    :param l2: end pos
-    :param point:
-    :return:
-    """
-    A1 = l2[1] - l1[1]
-    B1 = l1[0] - l2[0]
-    C1 = (l2[1] - l1[1])*l1[0] + (l1[0] - l2[0])*l1[1]
-    C2 = -B1 * point[0] + A1 * point[1]
-    det = A1*A1 + B1*B1
-    if det == 0:
-        cx, cy = point
-    else:
-        cx = (A1*C1 - B1*C2)/det
-        cy = (A1*C2 + B1*C1)/det
-
-    return [cx, cy]
-
-def distance_to_line(l1, l2, pos):
-    closest_p = closest_point(l1, l2, pos)
-
-    n = [pos[0] - closest_p[0], pos[1] - closest_p[1]]  # compute normal
-    nn = n[0] ** 2 + n[1] ** 2
-    nn_sqrt = math.sqrt(nn)
-    cl1 = [l1[0] - pos[0], l1[1] - pos[1]]
-    cl1_n = (cl1[0] * n[0] + cl1[1] * n[1]) / nn_sqrt
-
-    return abs(cl1_n)
 
 
 class curling_joint(OlympicsBase):
@@ -256,20 +226,18 @@ class curling_joint(OlympicsBase):
     def check_action(self, action_list):
         action = []
         for agent_idx in range(len(self.agent_list)):
-            if self.agent_list[agent_idx].type == 'agent':
-                if self.agent_list[agent_idx].color == 'purple':
-                    action.append(action_list[0] if not self.release[0] else None)
-                elif self.agent_list[agent_idx].color == 'green':
-                    action.append(action_list[1] if not self.release[1] else None)
+            agent = self.agent_list[agent_idx]
+            if agent.type == 'agent':
+                if agent.color == 'purple':
+                    action.append(action_list[0])
+                elif agent.color == 'green':
+                    action.append(action_list[1])
                 else:
                     raise NotImplementedError
-
-                _ = action_list.pop(0)
             else:
                 action.append(None)
 
         return action
-
 
 
     def step(self, actions_list):
@@ -529,14 +497,14 @@ class curling_joint(OlympicsBase):
 
 
         if self.draw_obs:
-            if self.current_team == 0:
-                # self.viewer.draw_view(self.obs_list, [self.agent_list[-1]])
-                # self.viewer.draw_curling_view(self.purple_rock,self.green_rock,self.obs_list, [self.agent_list[-1]])
-                self._draw_curling_view(self.obs_list, self.agent_list)
-            else:
-                # self.viewer.draw_view([None, self.obs_list[0]], [None, self.agent_list[-1]])
-                # self.viewer.draw_curling_view(self.purple_rock, self.green_rock, [None, self.obs_list[0]], [None, self.agent_list[-1]])
-                self._draw_curling_view(self.obs_list, self.agent_list)
+        #     if self.current_team == 0:
+        #         # self.viewer.draw_view(self.obs_list, [self.agent_list[-1]])
+        #         # self.viewer.draw_curling_view(self.purple_rock,self.green_rock,self.obs_list, [self.agent_list[-1]])
+        #         self._draw_curling_view(self.obs_list, self.agent_list)
+        #     else:
+        #         # self.viewer.draw_view([None, self.obs_list[0]], [None, self.agent_list[-1]])
+        #         # self.viewer.draw_curling_view(self.purple_rock, self.green_rock, [None, self.obs_list[0]], [None, self.agent_list[-1]])
+        #         self._draw_curling_view(self.obs_list, self.agent_list)
 
 
             debug('Agent 0', x=570, y=110, c='purple')

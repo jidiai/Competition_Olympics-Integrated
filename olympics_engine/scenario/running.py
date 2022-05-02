@@ -5,18 +5,27 @@ import pygame
 import sys
 
 class Running(OlympicsBase):
-    def __init__(self, map, seed = None, minimap=False):
-        self.minimap_mode = minimap
+    def __init__(self, map, seed = None):
+        self.minimap_mode = map['obs_cfg'].get('minimap', False)
 
         super(Running, self).__init__(map, seed)
 
-        self.gamma = 1  # v衰减系数
-        self.restitution = 0.5
+        self.game_name = 'running'
+
+        self.agent1_color = self.agent_list[0].color
+        self.agent2_color = self.agent_list[1].color
+
+        self.tau = map['env_cfg'].get('tau', 0.1)
+        self.gamma = map["env_cfg"].get('gamma', 1)
+        self.wall_restitution = map['env_cfg'].get('wall_restitution', 1)
+        self.circle_restitution = map['env_cfg'].get('circle_restitution', 1)
+        self.max_step = map['env_cfg'].get('max_step', 500)
+        self.energy_recover_rate = map['env_cfg'].get('energy_recover_rate', 200)
+        self.speed_cap = map['env_cfg'].get('speed_cap', 500)
+
         self.print_log = False
         self.print_log2 = False
-        self.tau = 0.1
 
-        self.speed_cap =  100
 
         self.draw_obs = True
         self.show_traj = True

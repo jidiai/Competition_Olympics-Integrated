@@ -1,7 +1,10 @@
-from .running import Running
-from .table_hockey import table_hockey
-from .football import football
-from .wrestling import wrestling
-from .curling import curling
-from .billiard import billiard
-
+from scenario.running import Running
+from scenario.running_competition import Running_competition
+from scenario.table_hockey import table_hockey
+from scenario.football import football
+from scenario.wrestling import wrestling
+from scenario.curling import curling
+from scenario.billiard import billiard
+from scenario.billiard_joint import billiard_joint
+from scenario.curling_long import curling_long
+from scenario.curling_competition import curling_competition

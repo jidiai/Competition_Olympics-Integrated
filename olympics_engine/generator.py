@@ -7,8 +7,10 @@ sys.path.append(str(father_path))
 
 module = __import__("objects")
 
-def create_scenario(scenario_name):
-    file_path = os.path.join(os.path.dirname(__file__), 'scenario.json')
+def create_scenario(scenario_name, file_path = None):
+    if file_path is None:
+        file_path = os.path.join(os.path.dirname(__file__), 'scenario.json')
+
     with open(file_path) as f:
         conf = json.load(f)[scenario_name]
 
@@ -18,7 +20,14 @@ def create_scenario(scenario_name):
     GameMap["view"] = conf["view"]
 
     for type in conf:
-        if (type == "wall") or (type == "cross"):
+        if type == 'env_cfg':
+            env_cfg_dict = conf[type]
+            GameMap["env_cfg"] = env_cfg_dict
+        elif type == 'obs_cfg':
+            obs_cfg_dict = conf[type]
+            GameMap["obs_cfg"] = obs_cfg_dict
+
+        elif (type == "wall") or (type == "cross"):
             #print("!!", conf[type]["objects"])
             for key, value in conf[type]["objects"].items():
                 GameMap["objects"].append(getattr(module, type.capitalize())

@@ -1,4 +1,4 @@
-from scenario import Running, table_hockey, football, wrestling
+from scenario import Running_competition, table_hockey, football, wrestling
 import sys
 from pathlib import Path
 base_path = str(Path(__file__).resolve().parent.parent)
@@ -14,12 +14,21 @@ class AI_Olympics:
         self.random_selection = random_selection
         self.minimap_mode = minimap
 
-        self.running_game = Running(create_scenario("running"), minimap=self.minimap_mode)
-        self.tablehockey_game = table_hockey(create_scenario("table-hockey"), minimap=self.minimap_mode)
-        self.football_game = football(create_scenario('football'), minimap=self.minimap_mode)
-        self.wrestling_game = wrestling(create_scenario('wrestling'), minimap=self.minimap_mode)
+        self.max_step = 200
 
-        self.game_pool = [{"name": 'running', 'game': self.running_game},
+        running_Gamemap = create_scenario("running-competition")
+        self.running_game = Running_competition(running_Gamemap, vis = 200, vis_clear=5)
+
+        self.tablehockey_game = table_hockey(create_scenario("table-hockey"))
+        self.football_game = football(create_scenario('football'))
+        self.wrestling_game = wrestling(create_scenario('wrestling'))
+
+        self.running_game.max_step = self.max_step
+        self.tablehockey_game.max_step = self.max_step
+        self.football_game.max_step = self.max_step
+        self.wrestling_game.max_step = self.max_step
+
+        self.game_pool = [{"name": 'running-competition', 'game': self.running_game},
                           {"name": 'table-hockey', "game": self.tablehockey_game},
                            {"name": 'football', "game": self.football_game},
                           {"name": 'wrestling', "game": self.wrestling_game}]
@@ -35,6 +44,11 @@ class AI_Olympics:
             self.current_game_idx = 0
 
         print(f'Playing {self.game_pool[selected_game_idx]["name"]}')
+        if self.game_pool[selected_game_idx]['name'] == 'running-competition':
+            self.game_pool[selected_game_idx]['game'] = \
+                Running_competition.reset_map(meta_map= self.running_game.meta_map,map_id=None, vis=200, vis_clear=5)     #random sample a map
+            self.game_pool[selected_game_idx]['game'].max_step = self.max_step
+
         self.current_game = self.game_pool[selected_game_idx]['game']
         self.game_score = [0,0]
 
@@ -80,6 +94,10 @@ class AI_Olympics:
 
     def is_terminal(self):
         return self.done
+
+    def __getattr__(self, item):
+        return getattr(self.current_game, item)
+
 
     def render(self):
         self.current_game.render()

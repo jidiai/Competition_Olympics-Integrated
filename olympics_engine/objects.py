@@ -1,48 +1,31 @@
 import math
 
-# Used to map colors to integers
-COLOR_TO_IDX = {
-    'red': 7,
-    'green': 1,
-    'sky blue': 2,
-    'yellow': 3,
-    'grey': 4,
-    'purple': 5,
-    'black': 6,
-    'light green': 0,
-    'blue': 8
-}
+# # Used to map colors to integers
+# COLOR_TO_IDX = {
+#     'red': 7,
+#     'green': 1,
+#     'sky blue': 2,
+#     'orange': 3,
+#     'grey': 4,
+#     'purple': 5,
+#     'black': 6,
+#     'light green': 0,
+#     'blue': 8
+# }
+#
+# # Map of object type to integers
+# OBJECT_TO_IDX = {
+#     'agent': 0,
+#     'wall': 1,  # 反弹
+#     'cross': 2,   # 可穿越
+#     'goal': 3,   # 可穿越 # maybe case by case
+#     'arc': 4,
+#     'ball': 5
+# }
 
-# Map of object type to integers
-OBJECT_TO_IDX = {
-    'agent': 0,
-    'wall': 1,  # 反弹
-    'cross': 2,   # 可穿越
-    'goal': 3,   # 可穿越 # maybe case by case
-    'arc': 4,
-    'ball': 5
-}
+from olympics_engine.tools.func import closest_point
+from olympics_engine.tools.settings import *
 
-def closest_point(l1, l2, point):
-    """
-    compute the coordinate of point on the line l1l2 closest to the given point, reference: https://en.wikipedia.org/wiki/Cramer%27s_rule
-    :param l1: start pos
-    :param l2: end pos
-    :param point:
-    :return:
-    """
-    A1 = l2[1] - l1[1]
-    B1 = l1[0] - l2[0]
-    C1 = (l2[1] - l1[1])*l1[0] + (l1[0] - l2[0])*l1[1]
-    C2 = -B1 * point[0] + A1 * point[1]
-    det = A1*A1 + B1*B1
-    if det == 0:
-        cx, cy = point
-    else:
-        cx = (A1*C1 - B1*C2)/det
-        cy = (A1*C2 + B1*C1)/det
-
-    return [cx, cy]
 
 
 class InternalState(object):

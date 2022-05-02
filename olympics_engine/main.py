@@ -8,7 +8,8 @@ import argparse
 from olympics_engine.agent import *
 import time
 
-from scenario import Running, table_hockey, football, wrestling, billiard, curling, curling_joint
+from scenario import Running, table_hockey, football, wrestling, billiard, \
+    curling, billiard_joint, curling_long, curling_competition, Running_competition
 
 from AI_olympics import AI_Olympics
 
@@ -44,6 +45,15 @@ if __name__ == "__main__":
         if args.map == 'running':
             game = Running(Gamemap)
             agent_num = 2
+        elif args.map == 'running-competition':
+
+            map_id = random.randint(1,10)
+            # map_id = 3
+            Gamemap = create_scenario(args.map)
+            game = Running_competition(meta_map=Gamemap,map_id=map_id)
+            agent_num = 2
+
+
         elif args.map == 'table-hockey':
             game = table_hockey(Gamemap)
             agent_num = 2
@@ -67,8 +77,20 @@ if __name__ == "__main__":
             game = curling_joint(Gamemap)
             agent_num = 2
 
+        elif args.map == 'billiard-joint':
+            game = billiard_joint(Gamemap)
+            agent_num = 2
+
+        elif args.map == 'curling-long':
+            game = curling_long(Gamemap)
+            agent_num = 2
+
+        elif args.map == 'curling-competition':
+            game = curling_competition(Gamemap)
+            agent_num = 2
+
         elif args.map == 'all':
-            game = AI_Olympics(random_selection = False, minimap=True)
+            game = AI_Olympics(random_selection = False, minimap=False)
             agent_num = 2
 
         agent = random_agent()
@@ -91,8 +113,12 @@ if __name__ == "__main__":
             #action2 = [100,0] #rand_agent.act(obs)
             if agent_num == 2:
                 action1, action2 = agent.act(obs[0]), rand_agent.act(obs[1])
-                # action1 = [200,20]
-                action1 =[200,1]
+                # action1 = [100,1]
+
+                # action1 =[50,1]
+                # action2 = [50,-1]
+
+
                 action = [action1, action2]
             elif agent_num == 1:
                 action1 = agent.act(obs)
@@ -105,21 +131,21 @@ if __name__ == "__main__":
             # action = [[200,action1[1]]]
 
             obs, reward, done, _ = game.step(action)
-            # print(f'reward = {reward}')
+            print(f'reward = {reward}')
             # print('obs = ', obs)
             # plt.imshow(obs[0])
             # plt.show()
             if RENDER:
                 game.render()
 
-            # time.sleep(0.02)
+            # time.sleep(0.05)
 
 
         print("episode duration: ", time.time() - time_epi_s, "step: ", step, (time.time() - time_epi_s)/step)
-        if args.map == 'billiard':
-            print('reward =', game.total_reward)
-        else:
-            print('reward = ', reward)
+        # if args.map == 'billiard':
+        #     print('reward =', game.total_reward)
+        # else:
+            # print('reward = ', reward)
         # if R:
         #     store(record,'bug1')
 

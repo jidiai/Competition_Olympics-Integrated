@@ -1,5 +1,17 @@
 {
   "running": {
+    "env_cfg": {
+      "tau": 0.1,
+      "gamma": 0.98,
+      "wall_restitution": 0.5,
+      "circle_restitution": 0.5,
+      "max_step": 500,
+      "energy_recover_rate": 200,
+      "speed_cap": 500
+    },
+    "obs_cfg": {
+      "minimap": false
+    },
     "wall": {
       "num": 3,
       "objects": {
@@ -164,7 +176,7 @@
           ],
           "mass": 1,
           "radius": 12.5,
-          "color": "purple",
+          "color": "light red",
           "vis": 200,
           "vis_clear": 5
         },
@@ -175,7 +187,7 @@
           ],
           "mass": 1,
           "radius": 12.5,
-          "color": "green",
+          "color": "blue",
           "vis": 200,
           "vis_clear": 5
         }
@@ -187,7 +199,38 @@
       "edge": 50
     }
   },
+  "running-competition": {
+    "env_cfg": {
+      "tau": 0.1,
+      "gamma": 0.98,
+      "wall_restitution": 0.5,
+      "circle_restitution": 0.5,
+      "max_step": 500,
+      "energy_recover_rate": 200,
+      "speed_cap": 500,
+      "faster": 1
+    },
+    "obs_cfg": {
+      "minimap": false
+    },
+    "view": {
+      "width": 600,
+      "height": 600,
+      "edge": 50
+    }
+  },
   "table-hockey": {
+    "env_cfg": {
+      "tau": 0.1,
+      "gamma": 1,
+      "wall_restitution": 0.8,
+      "circle_restitution": 1,
+      "max_step": 500,
+      "speed_cap": 100
+    },
+    "obs_cfg": {
+      "minimap": false
+    },
     "wall": {
       "num": 5,
       "objects": {
@@ -202,7 +245,8 @@
               600
             ]
           ],
-          "color": "black"
+          "color": "white",
+          "width": 5
         },
         "component2": {
           "initial_position": [
@@ -215,7 +259,8 @@
               200
             ]
           ],
-          "color": "black"
+          "color": "white",
+          "width": 5
         },
         "component3": {
           "initial_position": [
@@ -228,7 +273,8 @@
               600
             ]
           ],
-          "color": "black"
+          "color": "white",
+          "width": 5
         },
         "component4": {
           "initial_position": [
@@ -241,7 +287,8 @@
               600
             ]
           ],
-          "color": "black"
+          "color": "white",
+          "width": 5
         },
         "component5": {
           "initial_position": [
@@ -254,7 +301,8 @@
               600
             ]
           ],
-          "color": "grey",
+          "color": "white",
+          "width": 5,
           "ball_pass": "True"
         }
       }
@@ -290,6 +338,67 @@
         }
       }
     },
+    "arc": {
+      "num": 2,
+      "objects": {
+        "component1": {
+          "initial_position": [
+            300,
+            350,
+            100,
+            100
+          ],
+          "start_radian": 90,
+          "end_radian": -90,
+          "passable": "True",
+          "color": "white",
+          "collision_mode": 0,
+          "width": 2
+        },
+        "component2": {
+          "initial_position": [
+            300,
+            350,
+            100,
+            100
+          ],
+          "start_radian": -90,
+          "end_radian": 90,
+          "passable": "True",
+          "color": "white",
+          "collision_mode": 0,
+          "width": 2
+        },
+        "component3": {
+          "initial_position": [
+            -40,
+            340,
+            125,
+            125
+          ],
+          "start_radian": -90,
+          "end_radian": 90,
+          "passable": "True",
+          "color": "white",
+          "collision_mode": 0,
+          "width": 2
+        },
+        "component4": {
+          "initial_position": [
+            620,
+            340,
+            125,
+            125
+          ],
+          "start_radian": 90,
+          "end_radian": -90,
+          "passable": "True",
+          "color": "white",
+          "collision_mode": 0,
+          "width": 2
+        }
+      }
+    },
     "agent": {
       "num": 2,
       "objects": {
@@ -300,7 +409,7 @@
           ],
           "mass": 1,
           "radius": 20,
-          "color": "purple",
+          "color": "light red",
           "vis": 200,
           "vis_clear": 5
         },
@@ -311,7 +420,7 @@
           ],
           "mass": 1,
           "radius": 20,
-          "color": "green",
+          "color": "blue",
           "vis": 200,
           "vis_clear": 5
         }
@@ -334,11 +443,24 @@
     "view": {
       "width": 600,
       "height": 600,
-      "edge": 50,
+      "edge": 70,
       "init_obs" : [0, 180, 0]
     }
   },
   "football": {
+    "env_cfg": {
+      "tau": 0.1,
+      "gamma": 0.98,
+      "wall_restitution": 0.8,
+      "circle_restitution": 1,
+      "max_step": 500,
+      "speed_cap": 100,
+      "faster": 1,
+      "energy_recover_rate": 100
+    },
+    "obs_cfg": {
+      "minimap": false
+    },
     "wall": {
       "num": 5,
       "objects": {
@@ -515,7 +637,8 @@
             ]
           ],
           "length": 200,
-          "color": "red"
+          "color": "red",
+          "width": 5
         },
         "component2": {
           "initial_position": [
@@ -529,7 +652,8 @@
             ]
           ],
           "length": 200,
-          "color": "red"
+          "color": "red",
+          "width": 5
         },
         "component3": {
           "initial_position": [
@@ -538,12 +662,11 @@
               270
             ],
             [
-              250,
+              150,
               270
             ]
           ],
-          "color": "purple",
-          "width": 10
+          "color": "light red"
         },
         "component4": {
           "initial_position": [
@@ -552,45 +675,42 @@
               530
             ],
             [
-              250,
+              150,
               530
             ]
           ],
-          "color": "purple",
-          "width": 10
+          "color": "light red"
         },
         "component5": {
           "initial_position": [
             [
-              250,
+              150,
               530
             ],
             [
-              250,
+              150,
               270
             ]
           ],
-          "color": "purple",
-          "width": 10
+          "color": "light red"
         },
         "component6": {
           "initial_position": [
             [
-              450,
+              550,
               530
             ],
             [
-              450,
+              550,
               270
             ]
           ],
-          "color": "green",
-          "width": 10
+          "color": "blue"
         },
         "component7": {
           "initial_position": [
             [
-              450,
+              550,
               530
             ],
             [
@@ -598,13 +718,12 @@
               530
             ]
           ],
-          "color": "green",
-          "width": 10
+          "color": "blue"
         },
         "component8": {
           "initial_position": [
             [
-              450,
+              550,
               270
             ],
             [
@@ -612,8 +731,51 @@
               270
             ]
           ],
-          "color": "green",
-          "width": 10
+          "color": "blue"
+        },
+        "component9": {
+          "initial_position": [
+            [
+              350,
+              200
+            ],
+            [
+              350,
+              600
+            ]
+          ],
+          "color": "white"
+        }
+      }
+    },
+    "arc": {
+      "num": 2,
+      "objects": {
+        "component1": {
+          "initial_position": [
+            300,
+            350,
+            100,
+            100
+          ],
+          "start_radian": 90,
+          "end_radian": -90,
+          "passable": "True",
+          "color": "white",
+          "collision_mode": 0
+        },
+        "component2": {
+          "initial_position": [
+            300,
+            350,
+            100,
+            100
+          ],
+          "start_radian": -90,
+          "end_radian": 90,
+          "passable": "True",
+          "color": "white",
+          "collision_mode": 0
         }
       }
     },
@@ -627,7 +789,7 @@
           ],
           "mass": 1,
           "radius": 20,
-          "color": "purple",
+          "color": "light red",
           "vis": 200,
           "vis_clear": 5
         },
@@ -638,7 +800,7 @@
           ],
           "mass": 1,
           "radius": 20,
-          "color": "green",
+          "color": "blue",
           "vis": 200,
           "vis_clear": 5
         }
@@ -661,41 +823,52 @@
     "view": {
       "width": 600,
       "height": 600,
-      "edge": 50,
+      "edge": 70,
       "init_obs" : [0, 180, 0]
     }
   },
   "wrestling": {
+    "env_cfg": {
+      "tau": 0.1,
+      "gamma": 1,
+      "wall_restitution": 1,
+      "circle_restitution": 1,
+      "max_step": 500,
+      "speed_cap": 100
+    },
+    "obs_cfg": {
+      "minimap": false
+    },
     "cross": {
       "num": 2,
       "objects": {
         "component1": {
           "initial_position": [
             [
-              100,
+              140,
               350
             ],
             [
-              500,
+              460,
               350
             ]
           ],
           "color": "grey",
-          "width": 10
+          "width": 5
         },
         "component2": {
           "initial_position": [
             [
               300,
-              150
+              190
             ],
             [
               300,
-              550
+              510
             ]
           ],
           "color": "grey",
-          "width": 10
+          "width": 5
         }
       }
     },
@@ -712,9 +885,9 @@
           "start_radian": 90,
           "end_radian": -90,
           "passable": "True",
-          "color": "blue",
+          "color": "white",
           "collision_mode": 0,
-          "width": 5
+          "width": 3
         },
         "component2": {
           "initial_position": [
@@ -726,9 +899,37 @@
           "start_radian": -90,
           "end_radian": 90,
           "passable": "True",
-          "color": "blue",
+          "color": "white",
           "collision_mode": 0,
-          "width": 5
+          "width": 3
+        },
+        "component3": {
+          "initial_position": [
+            250,
+            300,
+            100,
+            100
+          ],
+          "start_radian": 90,
+          "end_radian": -90,
+          "passable": "True",
+          "color": "grey",
+          "collision_mode": 0,
+          "width": 3
+        },
+        "component4": {
+          "initial_position": [
+            250,
+            300,
+            100,
+            100
+          ],
+          "start_radian": -90,
+          "end_radian": 90,
+          "passable": "True",
+          "color": "grey",
+          "collision_mode": 0,
+          "width": 3
         }
       }
     },
@@ -742,7 +943,7 @@
           ],
           "mass": 1,
           "radius": 20,
-          "color": "purple",
+          "color": "light red",
           "vis": 200,
           "vis_clear": 5
         },
@@ -753,100 +954,9 @@
           ],
           "mass": 1,
           "radius": 20,
-          "color": "green",
+          "color": "blue",
           "vis": 200,
           "vis_clear": 5
-        }
-      }
-    },
-    "view": {
-      "width": 600,
-      "height": 600,
-      "edge": 50,
-      "init_obs": [
-        90,
-        -90
-      ]
-    }
-  },
-  "volleyball": {
-    "wall": {
-      "num": 5,
-      "objects": {
-        "component1": {
-          "initial_position": [
-            [
-              50,
-              200
-            ],
-            [
-              50,
-              550
-            ]
-          ],
-          "color": "black"
-        },
-        "component2": {
-          "initial_position": [
-            [
-              50,
-              550
-            ],
-            [
-              600,
-              550
-            ]
-          ],
-          "color": "black"
-        },
-        "component3": {
-          "initial_position": [
-            [
-              600,
-              200
-            ],
-            [
-              600,
-              550
-            ]
-          ],
-          "color": "black"
-        },
-        "component4": {
-          "initial_position": [
-            [
-              325,
-              450
-            ],
-            [
-              325,
-              550
-            ]
-          ],
-          "color": "black"
-        }
-      }
-    },
-    "agent": {
-      "num": 2,
-      "objects": {
-        "component1": {
-          "initial_position": [
-            200,
-            500
-          ],
-          "mass": 1,
-          "radius": 20,
-          "color": "purple"
-        },
-        "component2": {
-          "initial_position": [
-            500,
-            500
-          ],
-          "mass": 1,
-          "radius": 20,
-          "color": "green"
         }
       }
     },
@@ -861,6 +971,22 @@
     }
   },
   "billiard": {
+    "env_cfg": {
+      "tau": 0.1,
+      "gamma": 0.985,
+      "wall_restitution": 0.8,
+      "circle_restitution": 1,
+      "max_step": 500,
+      "energy_recover_rate": 200,
+      "speed_cap": 500,
+      "faster": 4,
+      "max_n_hit": 3,
+      "white_penalty": -10,
+      "pot_reward": 1
+    },
+    "obs_cfg": {
+      "minimap": false
+    },
     "wall": {
       "num": 5,
       "objects": {
@@ -1048,7 +1174,237 @@
       "edge": 50
     }
   },
+  "billiard-joint": {
+    "env_cfg": {
+      "tau": 0.1,
+      "gamma": 0.985,
+      "wall_restitution": 0.8,
+      "circle_restitution": 1,
+      "max_step": 500,
+      "energy_recover_rate": 200,
+      "speed_cap": 500,
+      "max_n_hit": 3,
+      "white_penalty": -10,
+      "pot_reward": 1
+    },
+    "obs_cfg": {
+      "minimap": false
+    },
+    "wall": {
+      "num": 5,
+      "objects": {
+        "component1": {
+          "initial_position": [
+            [
+              50,
+              250
+            ],
+            [
+              50,
+              500
+            ]
+          ],
+          "color": "black"
+        },
+        "component2": {
+          "initial_position": [
+            [
+              100,
+              550
+            ],
+            [
+              600,
+              550
+            ]
+          ],
+          "color": "black"
+        },
+        "component3": {
+          "initial_position": [
+            [
+              650,
+              250
+            ],
+            [
+              650,
+              500
+            ]
+          ],
+          "color": "black"
+        },
+        "component4": {
+          "initial_position": [
+            [
+              600,
+              200
+            ],
+            [
+              100,
+              200
+            ]
+          ],
+          "color": "black"
+        }
+      }
+    },
+    "arc": {
+      "num": 4,
+      "objects": {
+        "component1": {
+          "initial_position": [
+            50,200,100,100
+          ],
+          "start_radian": 90,
+          "end_radian": 180,
+          "passable": "True",
+          "color": "blue",
+          "collision_mode": 3,
+          "width": 5
+        },
+        "component2": {
+          "initial_position": [
+            50,450,100,100
+          ],
+          "start_radian": -180,
+          "end_radian": -90,
+          "passable": "True",
+          "color": "blue",
+          "collision_mode": 3,
+          "width": 5
+        },
+        "component3": {
+          "initial_position": [
+            550,450,100,100
+          ],
+          "start_radian": -90,
+          "end_radian": 0,
+          "passable": "True",
+          "color": "blue",
+          "collision_mode": 3,
+          "width": 5
+        },
+        "component4": {
+          "initial_position": [
+            550,200,100,100
+          ],
+          "start_radian": 0,
+          "end_radian": 90,
+          "passable": "True",
+          "color": "blue",
+          "collision_mode": 3,
+          "width": 5
+        }
+      }
+    },
+    "agent": {
+      "num": 2,
+      "objects": {
+        "component1": {
+          "initial_position": [
+            100,
+            325
+          ],
+          "mass": 1,
+          "radius": 15,
+          "color": "light red",
+          "vis": 200,
+          "vis_clear": 5
+        },
+        "component2": {
+          "initial_position": [
+            100,
+            425
+          ],
+          "mass": 1,
+          "radius": 15,
+          "color": "sky blue",
+          "vis": 200,
+          "vis_clear": 5
+        }
+      }
+    },
+    "ball": {
+      "num": 1,
+      "objects": {
+        "component1": {
+          "initial_position": [
+            500,
+            375
+          ],
+          "mass": 1,
+          "radius": 15,
+          "color": "sky blue"
+        },
+        "component2": {
+          "initial_position": [
+            525,
+            393
+          ],
+          "mass": 1,
+          "radius": 15,
+          "color": "light red"
+        },
+        "component3": {
+          "initial_position": [
+            525,
+            358
+          ],
+          "mass": 1,
+          "radius": 15,
+          "color": "sky blue"
+        },
+        "component4": {
+          "initial_position": [
+            550,
+            340
+          ],
+          "mass": 1,
+          "radius": 15,
+          "color": "light red"
+        },
+        "component5": {
+          "initial_position": [
+            550,
+            410
+          ],
+          "mass": 1,
+          "radius": 15,
+          "color": "sky blue"
+        },
+        "component6": {
+          "initial_position": [
+            550,
+            375
+          ],
+          "mass": 1,
+          "radius": 15,
+          "color": "light red"
+        }
+      }
+    },
+    "view": {
+      "width": 600,
+      "height": 600,
+      "edge": 50
+    }
+  },
   "curling": {
+    "env_cfg": {
+      "tau": 0.1,
+      "gamma": 0.98,
+      "wall_restitution": 1,
+      "circle_restitution": 1,
+      "max_step": 500,
+      "energy_recover_rate": 200,
+      "speed_cap": 500,
+      "faster": 4,
+      "field_gamma": 0.95,
+      "round_max_step": 70,
+      "max_n": 3
+    },
+    "obs_cfg": {
+      "minimap": false
+    },
     "wall": {
       "num": 4,
       "objects": {
@@ -1362,7 +1718,7 @@
       "objects": {
         "component1": {
           "initial_position": [
-            150,
+            200,
             150
           ],
           "mass": 1,
@@ -1373,7 +1729,7 @@
         },
         "component2": {
           "initial_position": [
-            450,
+            400,
             150
           ],
           "mass": 1,
@@ -1389,6 +1745,370 @@
       "height": 600,
       "edge": 50,
       "init_obs": [90, 90]
+    }
+  },
+  "curling-long": {
+    "env_cfg": {
+      "tau": 0.1,
+      "gamma": 0.98,
+      "wall_restitution": 1,
+      "circle_restitution": 1,
+      "max_step": 500,
+      "energy_recover_rate": 200,
+      "speed_cap": 500,
+      "faster": 5,
+      "field_gamma": 0.95,
+      "round_max_step": 70,
+      "max_n": 3
+    },
+    "obs_cfg": {
+      "minimap": false
+    },
+    "wall": {
+      "num": 4,
+      "objects": {
+        "component1": {
+          "initial_position": [
+            [
+              150,
+              100
+            ],
+            [
+              450,
+              100
+            ]
+          ],
+          "color": "black",
+          "width": 5
+        },
+        "component2": {
+          "initial_position": [
+            [
+              150,
+              100
+            ],
+            [
+              150,
+              1100
+            ]
+          ],
+          "color": "black",
+          "width": 5
+        },
+        "component3": {
+          "initial_position": [
+            [
+              450,
+              100
+            ],
+            [
+              450,
+              1100
+            ]
+          ],
+          "color": "black",
+          "width": 5
+        }
+      }
+    },
+    "arc": {
+      "num": 4,
+      "objects": {
+        "component1": {
+          "initial_position": [
+            250,850, 100,100
+          ],
+          "start_radian": 90,
+          "end_radian": -90,
+          "passable": "True",
+          "color": "red",
+          "collision_mode": 0,
+          "width": 20
+        },
+        "component2": {
+          "initial_position": [
+            250,850, 100,100
+          ],
+          "start_radian": -90,
+          "end_radian": 90,
+          "passable": "True",
+          "color": "red",
+          "collision_mode": 0,
+          "width": 20
+        },
+        "component3": {
+          "initial_position": [
+            200,800, 200,200
+          ],
+          "start_radian": 90,
+          "end_radian": -90,
+          "passable": "True",
+          "color": "sky blue",
+          "collision_mode": 0,
+          "width": 20
+        },
+        "component4": {
+          "initial_position": [
+            200,800, 200,200
+          ],
+          "start_radian": -90,
+          "end_radian": 90,
+          "passable": "True",
+          "color": "sky blue",
+          "collision_mode": 0,
+          "width": 20
+        }
+
+      }
+
+    },
+    "cross": {
+      "num": 1,
+      "objects": {
+        "component1": {
+          "initial_position": [
+            [
+              100,
+              450
+            ],
+            [
+              500,
+              450
+            ]
+          ],
+          "color": "red"
+        },
+        "component2": {
+          "initial_position": [
+            [
+              150,
+              900
+            ],
+            [
+              450,
+              900
+            ]
+          ],
+          "color": "grey"
+        },
+        "component3": {
+          "initial_position": [
+            [
+              300,
+              100
+            ],
+            [
+              300,
+              1100
+            ]
+          ],
+          "color": "grey"
+        }
+      }
+    },
+    "agent": {
+      "num": 1,
+      "objects": {
+        "component1": {
+          "initial_position": [
+            300,
+            150
+          ],
+          "mass": 1,
+          "radius": 15,
+          "color": "purple",
+          "vis": 200,
+          "vis_clear": 5
+        }
+      }
+    },
+    "view": {
+      "width": 600,
+      "height": 1000,
+      "edge": 50,
+      "init_obs": [90]
+    }
+  },
+  "curling-competition": {
+    "env_cfg": {
+      "tau": 0.1,
+      "gamma": 0.98,
+      "wall_restitution": 1,
+      "circle_restitution": 1,
+      "max_step": 500,
+      "energy_recover_rate": 200,
+      "speed_cap": 500,
+      "faster": 5,
+      "field_gamma": 0.95,
+      "round_max_step": 100,
+      "max_n": 4
+    },
+    "obs_cfg": {
+      "minimap": false
+    },
+    "wall": {
+      "num": 4,
+      "objects": {
+        "component1": {
+          "initial_position": [
+            [
+              150,
+              100
+            ],
+            [
+              450,
+              100
+            ]
+          ],
+          "color": "black",
+          "width": 5
+        },
+        "component2": {
+          "initial_position": [
+            [
+              150,
+              100
+            ],
+            [
+              150,
+              700
+            ]
+          ],
+          "color": "black",
+          "width": 5
+        },
+        "component3": {
+          "initial_position": [
+            [
+              450,
+              100
+            ],
+            [
+              450,
+              700
+            ]
+          ],
+          "color": "black",
+          "width": 5
+        }
+      }
+    },
+    "arc": {
+      "num": 4,
+      "objects": {
+        "component1": {
+          "initial_position": [
+            250,450, 100,100
+          ],
+          "start_radian": 90,
+          "end_radian": -90,
+          "passable": "True",
+          "color": "red",
+          "collision_mode": 0,
+          "width": 20
+        },
+        "component2": {
+          "initial_position": [
+            250,450, 100,100
+          ],
+          "start_radian": -90,
+          "end_radian": 90,
+          "passable": "True",
+          "color": "red",
+          "collision_mode": 0,
+          "width": 20
+        },
+        "component3": {
+          "initial_position": [
+            200,400, 200,200
+          ],
+          "start_radian": 90,
+          "end_radian": -90,
+          "passable": "True",
+          "color": "sky blue",
+          "collision_mode": 0,
+          "width": 20
+        },
+        "component4": {
+          "initial_position": [
+            200,400, 200,200
+          ],
+          "start_radian": -90,
+          "end_radian": 90,
+          "passable": "True",
+          "color": "sky blue",
+          "collision_mode": 0,
+          "width": 20
+        }
+
+      }
+
+    },
+    "cross": {
+      "num": 1,
+      "objects": {
+        "component1": {
+          "initial_position": [
+            [
+              100,
+              350
+            ],
+            [
+              500,
+              350
+            ]
+          ],
+          "color": "red"
+        },
+        "component2": {
+          "initial_position": [
+            [
+              150,
+              500
+            ],
+            [
+              450,
+              500
+            ]
+          ],
+          "color": "grey"
+        },
+        "component3": {
+          "initial_position": [
+            [
+              300,
+              100
+            ],
+            [
+              300,
+              650
+            ]
+          ],
+          "color": "grey"
+        }
+      }
+    },
+    "agent": {
+      "num": 1,
+      "objects": {
+        "component1": {
+          "initial_position": [
+            300,
+            150
+          ],
+          "mass": 1,
+          "radius": 15,
+          "color": "purple",
+          "vis": 300,
+          "vis_clear": 10
+        }
+      }
+    },
+    "view": {
+      "width": 600,
+      "height": 600,
+      "edge": 50,
+      "init_obs": [90]
     }
   }
 }

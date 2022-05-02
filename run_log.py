@@ -81,72 +81,6 @@ def set_seed(g, env_name):
         g.set_seed(seed)
 
 
-def render_game(g, fps=1):
-    """
-    This function is used to generate log for pygame rendering locally and render in time.
-    The higher the fps, the faster the speed for rendering next step.
-    only support gridgame:
-    "gobang_1v1", "reversi_1v1", "snakes_1v1", "sokoban_2p", "snakes_3v3", "snakes_5p", "sokoban_1p", "cliffwalking"
-    """
-
-    import pygame
-    pygame.init()
-    screen = pygame.display.set_mode(g.grid.size)
-    pygame.display.set_caption(g.game_name)
-    clock = pygame.time.Clock()
-    for i in range(len(policy_list)):
-        if policy_list[i] not in get_valid_agents():
-            raise Exception("agent {} not valid!".format(policy_list[i]))
-
-        file_path = os.path.dirname(os.path.abspath(__file__)) + "/examples/algo/" + policy_list[i] + "/submission.py"
-        if not os.path.exists(file_path):
-            raise Exception("file {} not exist!".format(file_path))
-
-        import_path = '.'.join(file_path.split('/')[-3:])[:-3]
-        function_name = 'm%d' % i
-        import_name = "my_controller"
-        import_s = "from %s import %s as %s" % (import_path, import_name, function_name)
-        print(import_s)
-        exec(import_s, globals())
-
-    st = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-    game_info = dict(game_name=env_type, n_player=g.n_player, board_height=g.board_height, board_width=g.board_width,
-                     init_state=str(g.get_render_data(g.current_state)), init_info=str(g.init_info), start_time=st,
-                     mode="window", render_info={"color": g.colors, "grid_unit": g.grid_unit, "fix": g.grid_unit_fix})
-
-    all_observes = g.all_observes
-    while not g.is_terminal():
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-        step = "step%d" % g.step_cnt
-        print(step)
-        game_info[step] = {}
-        game_info[step]["time"] = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-        joint_act = get_joint_action_eval(g, multi_part_agent_ids, policy_list, actions_space, all_observes)
-        next_state, reward, done, info_before, info_after = g.step(joint_act)
-        if info_before:
-            game_info[step]["info_before"] = info_before
-        game_info[step]["joint_action"] = str(joint_act)
-
-        pygame.surfarray.blit_array(screen, g.render_board().transpose(1, 0, 2))
-        pygame.display.flip()
-
-        game_info[step]["state"] = str(g.get_render_data(g.current_state))
-        game_info[step]["reward"] = str(reward)
-
-        if info_after:
-            game_info[step]["info_after"] = info_after
-
-        clock.tick(fps)
-
-    game_info["winner"] = g.check_win()
-    game_info["winner_information"] = str(g.won)
-    game_info["n_return"] = str(g.n_return)
-    ed = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-    game_info["end_time"] = ed
-
-
 def run_game(g, env_name, multi_part_agent_ids, actions_spaces, policy_list, render_mode):
     """
     This function is used to generate log for Vue rendering. Saves .json file
@@ -191,7 +125,7 @@ def run_game(g, env_name, multi_part_agent_ids, actions_spaces, policy_list, ren
         if g.step_cnt % 10 == 0:
             print(step)
 
-        if hasattr(g, "env_core"):
+        if render_mode and hasattr(g, "env_core"):
             if hasattr(g.env_core, "render"):
                 g.env_core.render()
         info_dict = {"time": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))}
@@ -228,8 +162,6 @@ if __name__ == "__main__":
 
     render_mode = False
 
-    render_in_time = False
-
     parser = argparse.ArgumentParser()
     parser.add_argument("--my_ai", default="random", help="random")
     parser.add_argument("--opponent", default="random", help="random")
@@ -239,7 +171,5 @@ if __name__ == "__main__":
     policy_list = [args.opponent, args.my_ai] #["random"] * len(game.agent_nums), here we control agent 2 (green agent)
 
     multi_part_agent_ids, actions_space = get_players_and_action_space_list(game)
-    if render_in_time:
-        render_game(game)
-    else:
-        run_game(game, env_type, multi_part_agent_ids, actions_space, policy_list, render_mode)
+
+    run_game(game, env_type, multi_part_agent_ids, actions_space, policy_list, render_mode)

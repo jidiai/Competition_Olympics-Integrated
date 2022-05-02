@@ -1,43 +1,7 @@
 import pygame
 
-# color 宏
-COLORS = {
-    'red': [255, 0, 0],
-    'green': [0, 255, 0],
-    'blue': [0, 0, 255],
-    'yellow': [255, 255, 0],
-    'grey':  [176,196,222],
-    'purple': [160, 32, 240],
-    'black': [0, 0, 0],
-    'white': [255, 255, 255],
-    'light green': [204, 255, 229],
-    'sky blue': [0,191,255]
-}
 
-COLOR_TO_IDX = {
-    'red': 7,
-    'green': 1,
-    'sky blue': 2,
-    'yellow': 3,
-    'grey': 4,
-    'purple': 5,
-    'black': 6,
-    'light green': 0,
-    'blue':8
-
-}
-
-IDX_TO_COLOR = {
-    0: 'light green',
-    1: 'green',
-    2: 'sky blue',
-    3: 'yellow',
-    4: 'grey',
-    5: 'purple',
-    6: 'black',
-    7: 'red',
-    8: 'blue'
-}
+from olympics_engine.tools.settings import *
 
 grid_node_width = 2     #for view drawing
 grid_node_height = 2
@@ -54,12 +18,20 @@ class Viewer():
         #
         # self.draw_background()
         self.color_list = [ [255, 0, 0], [0, 255, 0], [0,0,255]  , [0,0,0], [160, 32, 240]]
+
+        self.screen_list = []
+
         # WIN_SIZE = 1000, 1000
     def set_mode(self):
         self.background = pygame.display.set_mode(self.WIN_SIZE)
 
-    def draw_background(self):
-        self.background.fill((255, 255, 255))
+    def set_screen(self, size, color, pos):
+        tmp_screen = pygame.Surface(size)
+        tmp_screen.fill(color)
+        self.screen_list.append({'screen':tmp_screen, "pos": pos})
+
+    def draw_background(self, color_code=(255,255,255)):
+        self.background.fill(color_code)
 
     def draw_ball(self, pos_list, agent_list):
         # self.background.fill((255, 255, 255))
@@ -111,9 +83,14 @@ class Viewer():
                 pygame.draw.circle(self.background, COLORS[agent_list[i].color], t, 2, 1)
 
     def draw_obs(self, points, agent_list):
-        for b in range(len(points)):
-            if points[b] is not None:
-                pygame.draw.lines(self.background, agent_list[b].color, 1, points[b], 2)
+        if len(points) >= len(agent_list):
+            for b in range(len(agent_list)):
+                if points[b] is not None:
+                    pygame.draw.lines(self.background, COLORS[agent_list[b].color], 1, points[b], 2)
+        else:
+            for b in range(len(points)):
+                if points[b] is not None:
+                    pygame.draw.lines(self.background, COLORS[agent_list[b].color], 1, points[b], 2)
 
     # def draw_energy_bar(self, agent_list, height = 100):
     #     #coord = [570 + 70 * i for i in range(len(agent_list))]
@@ -162,7 +139,7 @@ class Viewer():
     #         count += 1
     #         coord += 70
 
-    def draw_view(self, obs, agent_list, leftmost_x, upmost_y, gap = 70):
+    def draw_view(self, obs, agent_list, leftmost_x, upmost_y, gap = 70, view_ifself=True, energy_width = 5):
 
         count = 0
         x_start = leftmost_x
@@ -186,16 +163,17 @@ class Viewer():
             center_x = x_start + ((obs_width)*grid_node_width)/2 #- agent_list[agent_idx].r
             center_y = y_start + (obs_height)*grid_node_height + agent_list[agent_idx].r
 
-            pygame.draw.circle(self.background, COLORS[agent_list[agent_idx].color], [center_x, center_y],
-                               agent_list[agent_idx].r, width=0)
-            pygame.draw.circle(self.background, COLORS['black'], [center_x, center_y],
-                               2, width=0)
+            if not view_ifself:
+                pygame.draw.circle(self.background, COLORS[agent_list[agent_idx].color], [center_x, center_y],
+                                   agent_list[agent_idx].r, width=0)
+                pygame.draw.circle(self.background, COLORS['black'], [center_x, center_y],
+                                   2, width=0)
 
             pygame.draw.lines(self.background, points =[[x_start,y_start],
                                                         [x_start, y_start+obs_height*grid_node_height],
                                                         [x_start+obs_width*grid_node_width, y_start+obs_height*grid_node_height],
                                                         [x_start+obs_width*grid_node_width, y_start]], closed=True,
-                              color = COLORS[agent_list[agent_idx].color], width=2)
+                              color = COLORS[agent_list[agent_idx].color], width=1)
 
             count += 1
             x_start += gap
@@ -215,9 +193,9 @@ class Viewer():
                 start_pos = [x_start2 , y_start2]
                 end_pos=  [x_start2 + obs_width*2*remaining_energy, y_start2]
                 pygame.draw.line(self.background, color=COLORS[agent_list[agent_idx].color], start_pos=start_pos,
-                                 end_pos=end_pos, width = 5)
+                                 end_pos=end_pos, width = energy_width)
 
-                debug(f"team {count2}", x = x_start2+obs_width*0.5,y = y_start2 + 15)
+                debug(f"team {count2}", x = x_start2+obs_width*0.5,y = y_start2 + 15, c='black')
 
                 count2 += 1
                 x_start2 += gap
