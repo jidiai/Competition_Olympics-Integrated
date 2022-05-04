@@ -17,7 +17,7 @@ class AI_Olympics:
         self.max_step = 200
 
         running_Gamemap = create_scenario("running-competition")
-        self.running_game = Running_competition(running_Gamemap, vis = 200, vis_clear=5)
+        self.running_game = Running_competition(running_Gamemap, vis = 200, vis_clear=5, agent1_color = 'light red', agent2_color='blue')
 
         self.tablehockey_game = table_hockey(create_scenario("table-hockey"))
         self.football_game = football(create_scenario('football'))
@@ -46,18 +46,29 @@ class AI_Olympics:
         print(f'Playing {self.game_pool[selected_game_idx]["name"]}')
         if self.game_pool[selected_game_idx]['name'] == 'running-competition':
             self.game_pool[selected_game_idx]['game'] = \
-                Running_competition.reset_map(meta_map= self.running_game.meta_map,map_id=None, vis=200, vis_clear=5)     #random sample a map
+                Running_competition.reset_map(meta_map= self.running_game.meta_map,map_id=None, vis=200, vis_clear=5,
+                                              agent1_color = 'light red', agent2_color = 'blue')     #random sample a map
             self.game_pool[selected_game_idx]['game'].max_step = self.max_step
 
         self.current_game = self.game_pool[selected_game_idx]['game']
         self.game_score = [0,0]
 
         init_obs = self.current_game.reset()
+        if self.current_game.game_name == 'running-competition':
+            init_obs = [{'agent_obs': init_obs[i], 'id': f'team_{i}'} for i in [0,1]]
+        for i in init_obs:
+            i['game_mode'] = 'NEW GAME'
+
         return init_obs
 
     def step(self, action_list):
 
         obs, reward, done, _ = self.current_game.step(action_list)
+
+        if self.current_game.game_name == 'running-competition':
+            obs = [{'agent_obs': obs[i], 'id': f'team_{i}'} for i in [0,1]]
+        for i in obs:
+            i['game_mode'] = ''
 
         if done:
             winner = self.current_game.check_win()
@@ -74,7 +85,10 @@ class AI_Olympics:
                     self.current_game = self.game_pool[self.current_game_idx]['game']
                     print(f'Playing {self.game_pool[self.current_game_idx]["name"]}')
                     obs = self.current_game.reset()
-
+                    if self.current_game.game_name == 'running-competition':
+                        obs = [{'agent_obs': obs[i], 'id': f'team_{i}'} for i in [0,1]]
+                    for i in obs:
+                        i['game_mode'] = 'NEW GAME'
 
         if self.done:
             print('game score = ', self.game_score)
