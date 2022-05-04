@@ -59,6 +59,9 @@ class AI_Olympics:
         for i in init_obs:
             i['game_mode'] = 'NEW GAME'
 
+        for i,j in enumerate(init_obs):
+            j['energy'] = self.current_game.agent_list[i].energy
+
         return init_obs
 
     def step(self, action_list):
@@ -69,6 +72,9 @@ class AI_Olympics:
             obs = [{'agent_obs': obs[i], 'id': f'team_{i}'} for i in [0,1]]
         for i in obs:
             i['game_mode'] = ''
+
+        for i,j in enumerate(obs):
+            j['energy'] = self.current_game.agent_list[i].energy
 
         if done:
             winner = self.current_game.check_win()
@@ -89,15 +95,17 @@ class AI_Olympics:
                         obs = [{'agent_obs': obs[i], 'id': f'team_{i}'} for i in [0,1]]
                     for i in obs:
                         i['game_mode'] = 'NEW GAME'
+                    for i,j in enumerate(obs):
+                        j['energy'] = self.current_game.agent_list[i].energy
 
         if self.done:
             print('game score = ', self.game_score)
             if self.game_score[0] > self.game_score[1]:
                 self.final_reward = [100, 0]
-                print('Results: team purple win!')
+                print('Results: team 0 win!')
             elif self.game_score[1] > self.game_score[0]:
                 self.final_reward = [0, 100]
-                print('Results: team green win!')
+                print('Results: team 1 win!')
             else:
                 self.final_reward = [0,0]
                 print('Results: Draw!')
