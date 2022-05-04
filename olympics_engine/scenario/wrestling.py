@@ -21,7 +21,7 @@ class wrestling(OlympicsBase):
         self.game_name = 'wrestling'
         self.agent1_color = self.agent_list[0].color
         self.agent2_color = self.agent_list[1].color
-        self.bound_color = 'white'
+        self.bound_color = 'green'
 
 
         self.gamma = map['env_cfg']['gamma']
@@ -34,7 +34,7 @@ class wrestling(OlympicsBase):
 
         self.draw_obs = True
         self.show_traj = False
-
+        self.beauty_render = False
 
     def check_overlap(self):
         pass
@@ -193,24 +193,26 @@ class wrestling(OlympicsBase):
                 self.viewer.set_mode()
                 self.display_mode=True
 
-                self._load_image()
-            self.viewer.draw_background(color_code=(108,180,143))
-            self._draw_playground()
-            self._draw_energy(self.agent_list)
+                if self.beauty_render:
+                    self._load_image()
+            self.viewer.draw_background(color_code=(108,180,143) if self.beauty_render else (255,255,255))
+            if self.beauty_render:
+                self._draw_playground()
+                self._draw_energy(self.agent_list)
 
             for w in self.map['objects']:
                 self.viewer.draw_map(w)
 
-            # self.viewer.draw_ball(self.agent_pos, self.agent_list)
-            self._draw_image(self.agent_pos, self.agent_list, self.agent_theta, self.obs_boundary)
-
-
-            # if self.draw_obs:
-            #     self.viewer.draw_obs(self.obs_boundary, self.agent_list)
+            if self.beauty_render:
+                self._draw_image(self.agent_pos, self.agent_list, self.agent_theta, self.obs_boundary)
+            else:
+                self.viewer.draw_ball(self.agent_pos, self.agent_list)
+                if self.draw_obs:
+                    self.viewer.draw_obs(self.obs_boundary, self.agent_list)
 
         if self.draw_obs:
             if len(self.obs_list) > 0:
-                self.viewer.draw_view(self.obs_list, self.agent_list, leftmost_x=470, upmost_y=10, gap = 130, energy_width=0)
+                self.viewer.draw_view(self.obs_list, self.agent_list, leftmost_x=470, upmost_y=10, gap = 130, energy_width=0 if self.beauty_render else 5)
 
         if self.show_traj:
             self.get_trajectory()

@@ -30,7 +30,7 @@ class table_hockey(OlympicsBase):
 
         self.draw_obs = True
         self.show_traj = False
-        
+        self.beauty_render = False
 
 
     def reset(self):
@@ -215,26 +215,27 @@ class table_hockey(OlympicsBase):
             if not self.display_mode:
                 self.viewer.set_mode()
                 self.display_mode=True
-
-                self._load_image()
+                if self.beauty_render:
+                    self._load_image()
 
             self.viewer.draw_background()
-            self._draw_playground()
-            self._draw_energy(self.agent_list)
+            if self.beauty_render:
+                self._draw_playground()
+                self._draw_energy(self.agent_list)
 
             for w in self.map['objects']:
                 self.viewer.draw_map(w)
 
-            # self.viewer.draw_ball(self.agent_pos, self.agent_list)
-            self._draw_image(self.agent_pos, self.agent_list, self.agent_theta, self.obs_boundary)
-
-
-            # if self.draw_obs:
-            #     self.viewer.draw_obs(self.obs_boundary, self.agent_list)
+            if self.beauty_render:
+                self._draw_image(self.agent_pos, self.agent_list, self.agent_theta, self.obs_boundary)
+            else:
+                self.viewer.draw_ball(self.agent_pos, self.agent_list)
+                if self.draw_obs:
+                    self.viewer.draw_obs(self.obs_boundary, self.agent_list)
 
         if self.draw_obs:
             if len(self.obs_list) > 0:
-                self.viewer.draw_view(self.obs_list, self.agent_list, leftmost_x=450, upmost_y=10, gap = 130, energy_width=0)
+                self.viewer.draw_view(self.obs_list, self.agent_list, leftmost_x=450, upmost_y=10, gap = 130, energy_width=0 if self.beauty_render else 5)
 
         if self.show_traj:
             self.get_trajectory()
