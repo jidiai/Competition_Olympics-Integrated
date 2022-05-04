@@ -203,12 +203,13 @@ def point_rotate(center, point, theta):
     new_y = px * ny[0] + py * ny[1]
     return [new_x, new_y]
 
-def DDA_line(matrix, draw_line, vis, vis_clear, value):
+def DDA_line(matrix, draw_line, vis, vis_clear, value, view_back=0):
     size = int(vis/vis_clear)
     assert matrix.shape[0] == size
     if len(draw_line) == 1:
         point1 = draw_line[0]
         x1, y1 = point1
+        x1 += view_back
         y1 += vis/2
         x1 /= vis_clear
         y1 /= vis_clear
@@ -224,10 +225,12 @@ def DDA_line(matrix, draw_line, vis, vis_clear, value):
         raise NotImplementedError
 
     x1,y1 = point1
+    x1 += view_back
     y1 += vis/2
     x1 /= vis_clear
     y1 /= vis_clear
     x2, y2 = point2
+    x2 += view_back
     y2 += vis/2
     x2 /= vis_clear
     y2 /= vis_clear
@@ -240,8 +243,20 @@ def DDA_line(matrix, draw_line, vis, vis_clear, value):
     else:
         steps = abs(dy)
 
-    if steps == 0:
-        raise NotImplementedError
+    if steps == 0:  #numerical error at avoiding intersection point repetition
+        point1 = draw_line[0]
+        x1, y1 = point1
+        x1 += view_back
+        y1 += vis/2
+        x1 /= vis_clear
+        y1 /= vis_clear
+
+        x = x1-0.5
+        y = y1-0.5
+        matrix[size-1-int(x)][int(y)] = 1
+        return matrix
+
+        # raise NotImplementedError
 
 
     delta_x = float(dx/steps)
