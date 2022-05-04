@@ -203,8 +203,8 @@
     "env_cfg": {
       "tau": 0.1,
       "gamma": 0.98,
-      "wall_restitution": 0.5,
-      "circle_restitution": 0.5,
+      "wall_restitution": 0.3,
+      "circle_restitution": 0.9,
       "max_step": 500,
       "energy_recover_rate": 200,
       "speed_cap": 500,
@@ -223,8 +223,8 @@
     "env_cfg": {
       "tau": 0.1,
       "gamma": 1,
-      "wall_restitution": 0.8,
-      "circle_restitution": 1,
+      "wall_restitution": 0.9,
+      "circle_restitution": 0.95,
       "max_step": 500,
       "speed_cap": 100
     },
@@ -245,7 +245,7 @@
               600
             ]
           ],
-          "color": "white",
+          "color": "black",
           "width": 5
         },
         "component2": {
@@ -259,7 +259,7 @@
               200
             ]
           ],
-          "color": "white",
+          "color": "black",
           "width": 5
         },
         "component3": {
@@ -273,7 +273,7 @@
               600
             ]
           ],
-          "color": "white",
+          "color": "black",
           "width": 5
         },
         "component4": {
@@ -287,7 +287,7 @@
               600
             ]
           ],
-          "color": "white",
+          "color": "black",
           "width": 5
         },
         "component5": {
@@ -301,7 +301,7 @@
               600
             ]
           ],
-          "color": "white",
+          "color": "black",
           "width": 5,
           "ball_pass": "True"
         }
@@ -351,7 +351,7 @@
           "start_radian": 90,
           "end_radian": -90,
           "passable": "True",
-          "color": "white",
+          "color": "grey",
           "collision_mode": 0,
           "width": 2
         },
@@ -365,7 +365,7 @@
           "start_radian": -90,
           "end_radian": 90,
           "passable": "True",
-          "color": "white",
+          "color": "grey",
           "collision_mode": 0,
           "width": 2
         },
@@ -379,7 +379,7 @@
           "start_radian": -90,
           "end_radian": 90,
           "passable": "True",
-          "color": "white",
+          "color": "light red",
           "collision_mode": 0,
           "width": 2
         },
@@ -393,7 +393,7 @@
           "start_radian": 90,
           "end_radian": -90,
           "passable": "True",
-          "color": "white",
+          "color": "blue",
           "collision_mode": 0,
           "width": 2
         }
@@ -451,8 +451,8 @@
     "env_cfg": {
       "tau": 0.1,
       "gamma": 0.98,
-      "wall_restitution": 0.8,
-      "circle_restitution": 1,
+      "wall_restitution": 0.9,
+      "circle_restitution": 0.9,
       "max_step": 500,
       "speed_cap": 100,
       "faster": 1,
@@ -744,7 +744,7 @@
               600
             ]
           ],
-          "color": "white"
+          "color": "grey"
         }
       }
     },
@@ -761,7 +761,7 @@
           "start_radian": 90,
           "end_radian": -90,
           "passable": "True",
-          "color": "white",
+          "color": "grey",
           "collision_mode": 0
         },
         "component2": {
@@ -774,7 +774,7 @@
           "start_radian": -90,
           "end_radian": 90,
           "passable": "True",
-          "color": "white",
+          "color": "grey",
           "collision_mode": 0
         }
       }
@@ -885,7 +885,7 @@
           "start_radian": 90,
           "end_radian": -90,
           "passable": "True",
-          "color": "white",
+          "color": "green",
           "collision_mode": 0,
           "width": 3
         },
@@ -899,7 +899,7 @@
           "start_radian": -90,
           "end_radian": 90,
           "passable": "True",
-          "color": "white",
+          "color": "green",
           "collision_mode": 0,
           "width": 3
         },
