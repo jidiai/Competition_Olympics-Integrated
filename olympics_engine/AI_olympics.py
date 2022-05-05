@@ -14,7 +14,7 @@ class AI_Olympics:
         self.random_selection = random_selection
         self.minimap_mode = minimap
 
-        self.max_step = 200
+        self.max_step = 300
 
         running_Gamemap = create_scenario("running-competition")
         self.running_game = Running_competition(running_Gamemap, vis = 200, vis_clear=5, agent1_color = 'light red', agent2_color='blue')
@@ -37,11 +37,14 @@ class AI_Olympics:
     def reset(self):
 
         self.done = False
+        selected_game_idx_pool = list(range(len(self.game_pool)))
         if self.random_selection:
-            selected_game_idx = random.randint(0, len(self.game_pool)-1)
-        else:
-            selected_game_idx = 0
-            self.current_game_idx = 0
+            random.shuffle(selected_game_idx_pool)            #random game playing sequence
+
+        self.selected_game_idx_pool = selected_game_idx_pool                           #fix game playing sequence
+        self.current_game_count = 0
+        selected_game_idx = self.selected_game_idx_pool[self.current_game_count]
+
 
         print(f'Playing {self.game_pool[selected_game_idx]["name"]}')
         if self.game_pool[selected_game_idx]['name'] == 'running-competition':
@@ -81,22 +84,23 @@ class AI_Olympics:
             if winner != '-1':
                 self.game_score[int(winner)] += 1
 
-            if self.random_selection:
-                    self.done = True
+
+            if self.current_game_count == len(self.game_pool)-1:
+                self.done = True
             else:
-                if self.current_game_idx == len(self.game_pool)-1:
-                    self.done = True
-                else:
-                    self.current_game_idx += 1
-                    self.current_game = self.game_pool[self.current_game_idx]['game']
-                    print(f'Playing {self.game_pool[self.current_game_idx]["name"]}')
-                    obs = self.current_game.reset()
-                    if self.current_game.game_name == 'running-competition':
-                        obs = [{'agent_obs': obs[i], 'id': f'team_{i}'} for i in [0,1]]
-                    for i in obs:
-                        i['game_mode'] = 'NEW GAME'
-                    for i,j in enumerate(obs):
-                        j['energy'] = self.current_game.agent_list[i].energy
+                # self.current_game_idx += 1
+                self.current_game_count += 1
+                self.current_game_idx = self.selected_game_idx_pool[self.current_game_count]
+
+                self.current_game = self.game_pool[self.current_game_idx]['game']
+                print(f'Playing {self.game_pool[self.current_game_idx]["name"]}')
+                obs = self.current_game.reset()
+                if self.current_game.game_name == 'running-competition':
+                    obs = [{'agent_obs': obs[i], 'id': f'team_{i}'} for i in [0,1]]
+                for i in obs:
+                    i['game_mode'] = 'NEW GAME'
+                for i,j in enumerate(obs):
+                    j['energy'] = self.current_game.agent_list[i].energy
 
         if self.done:
             print('game score = ', self.game_score)
