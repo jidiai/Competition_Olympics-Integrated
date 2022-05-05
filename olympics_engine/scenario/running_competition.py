@@ -19,7 +19,7 @@ class Running_competition(OlympicsBase):
     def __init__(self, meta_map, map_id = None, seed = None, vis = None, vis_clear=None, agent1_color = 'purple', agent2_color = 'green'):
         # self.minimap_mode = map['obs_cfg'].get('minimap', False)
 
-        Gamemap = Running_competition.choose_a_map(idx = map_id)        #fixme(yan): penatration in some maps, need to check engine, vis
+        Gamemap, map_index = Running_competition.choose_a_map(idx = map_id)        #fixme(yan): penatration in some maps, need to check engine, vis
         if vis is not None:
             for a in Gamemap['agents']:
                 a.visibility = vis
@@ -32,6 +32,7 @@ class Running_competition(OlympicsBase):
                     a.original_color = agent2_color
 
         self.meta_map = meta_map
+        self.map_index = map_index
 
         super(Running_competition, self).__init__(Gamemap, seed)
 
@@ -69,7 +70,7 @@ class Running_competition(OlympicsBase):
         if idx is None:
             idx = random.randint(1,3)
         MapStats = create_scenario("map"+str(idx), file_path=  maps_path)
-        return MapStats
+        return MapStats, idx
 
     def check_overlap(self):
         #todo
