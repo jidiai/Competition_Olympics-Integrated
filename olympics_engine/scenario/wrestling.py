@@ -157,9 +157,9 @@ class wrestling(OlympicsBase):
         if agent1_finished and agent2_finished:
             return [0., 0]
         elif agent1_finished and not agent2_finished:
-            return [0., 100]
+            return [0., 1]
         elif not agent1_finished and agent2_finished:
-            return [100., 0]
+            return [1., 0]
         else:
             return [0,0]
 

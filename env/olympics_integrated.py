@@ -23,7 +23,7 @@ class OlympicsIntegrated(Game):
         self.seed = seed
         self.set_seed()
 
-        self.env_core = AI_Olympics(random_selection = False, minimap = False)
+        self.env_core = AI_Olympics(random_selection = True, minimap = False)
         self.max_step = int(conf['max_step'])
         self.joint_action_space = self.set_action_space()
         self.action_dim = self.joint_action_space

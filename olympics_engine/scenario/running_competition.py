@@ -68,7 +68,7 @@ class Running_competition(OlympicsBase):
     @staticmethod
     def choose_a_map(idx=None):
         if idx is None:
-            idx = random.randint(1,3)
+            idx = random.randint(1,4)
         MapStats = create_scenario("map"+str(idx), file_path=  maps_path)
         return MapStats, idx
 
@@ -83,7 +83,7 @@ class Running_competition(OlympicsBase):
 
         for agent_idx in range(self.agent_num):
             if self.agent_list[agent_idx].finished:
-                agent_reward[agent_idx] = 100.
+                agent_reward[agent_idx] = 1.
 
         return agent_reward
 

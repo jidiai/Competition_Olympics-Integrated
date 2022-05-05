@@ -24,6 +24,7 @@ from olympics_engine.tools.settings import *
 class OlympicsBase(object):
     def __init__(self, map, seed=None):
         self.VIEW_ITSELF = True
+        self.VIEW_BACK = 0.2
         self.seed = seed
         self.set_seed()
 
@@ -41,7 +42,7 @@ class OlympicsBase(object):
 
         self.agent_record = []
 
-        self.show_traj = True
+        self.show_traj = False
         self.draw_obs = True
         self.print_log = False
         self.print_log2 = False
@@ -127,7 +128,7 @@ class OlympicsBase(object):
         x_init, y_init = init_position[0], init_position[1]
         for unit in [[0,1], [1,1], [1,-1], [0,-1]]:
             if self.VIEW_ITSELF:
-                x = x_init + visibility * unit[0]
+                x = x_init + visibility * unit[0] - self.VIEW_BACK * visibility
             else:
                 x = x_init + r + visibility * unit[0]
 
@@ -766,7 +767,7 @@ class OlympicsBase(object):
             # obs_map = np.zeros((visibility[0], visibility[1]))
             # obs_weight,obs_height = int(visibility[0]/v_clear[0]),int(visibility[1]/v_clear[1])
             obs_size = int(visibility / v_clear)
-
+            view_back = visibility*self.VIEW_BACK
             # update_obs_boundary()
             agent_current_boundary = list()
             for b in self.obs_boundary_init[agent_idx]:
@@ -790,9 +791,9 @@ class OlympicsBase(object):
                 agent_current_boundary.append([x_new_, -y_new_])
             self.obs_boundary.append(agent_current_boundary)
 
-            #compute center of view
-            view_center_x = agent_x + visibility/2*math.cos(theta*math.pi/180)      #start from agent x,y
-            view_center_y = agent_y + visibility/2*math.sin(theta*math.pi/180)
+            #compute center of view, need to fix for non-view-self
+            view_center_x = agent_x + (visibility/2-view_back/2)*math.cos(theta*math.pi/180)      #start from agent x,y
+            view_center_y = agent_y + (visibility/2-view_back/2)*math.sin(theta*math.pi/180)
             view_center = [view_center_x, view_center_y]
             view_R = visibility*math.sqrt(2)/2
             line_consider = []
@@ -814,7 +815,7 @@ class OlympicsBase(object):
 
             # distance to view center
             if self.VIEW_ITSELF:
-                vec_oc = (visibility/2, 0)
+                vec_oc = (visibility/2-view_back/2, 0)
             else:
                 vec_oc = (agent.r+visibility/2, 0)
             c_x = vec_oc[0]
@@ -900,10 +901,11 @@ class OlympicsBase(object):
 
                     # compute the intersection point
                     intersect_p = []
-                    rotate_boundary = [[[0, -visibility / 2], [0, visibility / 2]],
-                                       [[0, visibility / 2], [visibility, visibility / 2]],
-                                       [[visibility, visibility / 2], [visibility, -visibility / 2]],
-                                       [[visibility, -visibility / 2], [0, -visibility / 2]]]
+                    rotate_boundary = [[[0-view_back, -visibility / 2], [0-view_back, visibility / 2]],
+                                       [[0-view_back, visibility / 2], [visibility-view_back, visibility / 2]],
+                                       [[visibility-view_back, visibility / 2], [visibility-view_back, -visibility / 2]],
+                                       [[visibility-view_back, -visibility / 2], [0-view_back, -visibility / 2]]]
+
 
                     # obs_rotate_boundary = []              #debug rotate boundary
                     # for line in self.obs_boundary:
@@ -921,8 +923,9 @@ class OlympicsBase(object):
 
                     draw_line = []
                     if len(intersect_p) == 0:
-                        point_1_in_view=  0 < obj.rotate_pos[0][0] < visibility and abs(obj.rotate_pos[0][1]) < visibility / 2
-                        point_2_in_view = 0 < obj.rotate_pos[1][0] < visibility and abs(obj.rotate_pos[1][1]) < visibility / 2
+                        point_1_in_view=  0 < obj.rotate_pos[0][0]+view_back < visibility and abs(obj.rotate_pos[0][1]) < visibility / 2
+                        point_2_in_view = 0 < obj.rotate_pos[1][0]+view_back < visibility and abs(obj.rotate_pos[1][1]) < visibility / 2
+
 
                         if point_1_in_view and point_2_in_view:
                             draw_line.append(obj.rotate_pos[0])
@@ -936,10 +939,10 @@ class OlympicsBase(object):
 
                         draw_line.append(intersect_p[0])
 
-                        if 0 < obj.rotate_pos[0][0] < visibility and abs(
+                        if 0 < obj.rotate_pos[0][0]+view_back < visibility and abs(
                                 obj.rotate_pos[0][1]) < visibility / 2:
                             draw_line.append(obj.rotate_pos[0])
-                        elif 0 < obj.rotate_pos[1][0] < visibility and abs(
+                        elif 0 < obj.rotate_pos[1][0] + view_back < visibility and abs(
                                 obj.rotate_pos[1][1]) < visibility / 2:
                             draw_line.append(obj.rotate_pos[1])
                         else:
@@ -958,7 +961,7 @@ class OlympicsBase(object):
                         raise ValueError('ERROR: multiple intersection points in DDA')
 
                     obs_map = DDA_line(obs_map, draw_line, visibility, v_clear,
-                                       value=COLOR_TO_IDX[obj.color])
+                                       value=COLOR_TO_IDX[obj.color], view_back=view_back)
 
                 else:
                     raise NotImplementedError
@@ -968,7 +971,7 @@ class OlympicsBase(object):
             #for component in map_objects:
             if len(list(reversed(map_objects))) == 0 and self.VIEW_ITSELF:   #if no object in the view, plot the agent itself
                 for i in range(obs_size):
-                    x = visibility - v_clear * i - v_clear / 2
+                    x = visibility - v_clear * i - v_clear / 2 - view_back
                     for j in range(obs_size):
                         y = visibility/2 - v_clear*j - v_clear /2
                         point = (x, y)
@@ -982,7 +985,7 @@ class OlympicsBase(object):
             for component in list(reversed(map_objects)):           #reverse to consider agent first, then wall
                 for i in range(obs_size):
                     if self.VIEW_ITSELF:
-                        x = visibility - v_clear*i - v_clear/2
+                        x = visibility - v_clear*i - v_clear/2 - view_back
                     else:
                         x = agent.r + visibility - v_clear*i - v_clear / 2
 
