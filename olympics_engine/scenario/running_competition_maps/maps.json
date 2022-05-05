@@ -244,7 +244,7 @@
             325.0
           ],
           "mass": 1,
-          "radius": 12.5,
+          "radius": 15,
           "color": "purple",
           "vis": 150,
           "vis_clear": 6
@@ -255,7 +255,7 @@
             375.0
           ],
           "mass": 1,
-          "radius": 12.5,
+          "radius": 15,
           "color": "green",
           "vis": 150,
           "vis_clear": 6
