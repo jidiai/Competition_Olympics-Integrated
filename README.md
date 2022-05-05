@@ -4,6 +4,8 @@
 
 **05/05/2022**: We fix some bugs, extend episode length of each subgames and add side information to the output information, including the partially-observed array, the energy left and the NEW_GAME Flag hinting the switch of subgames; we also shift agent's view backward, letting the agent to see its back and the whole body of the agent itself as well. Meanwhile, we randomly shuffle the order of subgames.
 
+rl_trainer is added, serving as an example on how to train an RL agents.
+
 ---
 ## Environment
 
