@@ -14,7 +14,7 @@ class AI_Olympics:
         self.random_selection = random_selection
         self.minimap_mode = minimap
 
-        self.max_step = 300
+        self.max_step = 400
 
         running_Gamemap = create_scenario("running-competition")
         self.running_game = Running_competition(running_Gamemap, vis = 200, vis_clear=5, agent1_color = 'light red', agent2_color='blue')
