@@ -83,7 +83,7 @@ class Running_competition(OlympicsBase):
 
         for agent_idx in range(self.agent_num):
             if self.agent_list[agent_idx].finished:
-                agent_reward[agent_idx] = 100.
+                agent_reward[agent_idx] = 1.
 
         return agent_reward
 

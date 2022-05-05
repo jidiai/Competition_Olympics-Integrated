@@ -154,14 +154,14 @@ class table_hockey(OlympicsBase):
 
         if ball_end_pos is not None and ball_end_pos[0] < 400:
             if self.agent_pos[0][0] < 400:
-                return [0.,100.]
+                return [0.,1.]
             else:
-                return [100., 0.]
+                return [1., 0.]
         elif ball_end_pos is not None and ball_end_pos[0] > 400:
             if self.agent_pos[0][0] < 400:
-                return [100. ,0.]
+                return [1. ,0.]
             else:
-                return [0., 100.]
+                return [0., 1.]
 
         else:
             return [0. ,0.]
