@@ -1,4 +1,8 @@
 # Competition_Olympics-Integrated
+---
+## Updates:
+
+**05/05/2022**: We fix some bugs, extend episode length of each subgames and add side information to the output information, including the partially-observed array, the energy left and the NEW_GAME Flag hinting the switch of subgames; we also shift agent's view backward, letting the agent to see its back and the whole body of the agent itself as well. Meanwhile, we randomly shuffle the order of subgames.
 
 ---
 ## Environment
@@ -24,7 +28,7 @@ Check details in Jidi Competition [IJCAI-ECAI 2022 AI Qlympics Competition](http
 
 <b>Action Space: </b>Continuous, a matrix with shape 2*1, representing applied force and steering angle respectively.
 
-<b>Observation: </b>A dictionary with keys 'obs' and 'controlled_player_index'. The value of 'obs' contains a 2D matrix with shape of 40x40 and other game-releated infomation. The 2D matrix records the view of agent along his current direction. Agent can see walls, marking lines, opponents and other game object within the vision area. The value of 'controlled_player_index' is the player id of the game.
+<b>Observation: </b>A dictionary with keys 'obs' and 'controlled_player_index'. The value of 'obs' contains a 2D matrix with shape of 40x40 and other game-releated infomation. The 2D matrix records the view of agent along his current direction. Agent can see walls, marking lines, opponents and other game object within the vision area. The value of 'controlled_player_index' is the player id of the game. The side information includes energy left and a game-switching flags.
 
 <b>Reward: </b>Each team obtains a +1 reward when winning a subgame, and 0 reward when losing a subgame.
 
@@ -32,9 +36,6 @@ Check details in Jidi Competition [IJCAI-ECAI 2022 AI Qlympics Competition](http
 
 <b>Registration: </b>Go to (http://www.jidiai.cn/compete_detail?compete=17).
 
-This is a POMDP simulated environment of 2D sports games where althletes are spheres and have continuous action space (torque and steering). The observation is a 30*30 array of agent's limited view range. We introduce collision and agent's fatigue such that no torque applies when running out of energy.
-
-This is for now a beta version and we intend to add more sports scenario, stay tuned :)
 
 ---
 ## Dependency
