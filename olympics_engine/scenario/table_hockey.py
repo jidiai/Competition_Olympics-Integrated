@@ -42,6 +42,7 @@ class table_hockey(OlympicsBase):
         self.viewer = Viewer(self.view_setting)
         self.display_mode=False
 
+        self.ball_pos_init()
 
         init_obs = self.get_obs()
         if self.minimap_mode:
@@ -50,7 +51,12 @@ class table_hockey(OlympicsBase):
         output_init_obs = self._build_from_raw_obs(init_obs)
         return output_init_obs
 
-
+    def ball_pos_init(self):
+        y_min, y_max = 300, 500
+        for index, item in enumerate(self.agent_list):
+            if item.type == 'ball':
+                random_y = random.uniform(y_min, y_max)
+                self.agent_init_pos[index][1] = random_y
 
 
     def check_overlap(self):
