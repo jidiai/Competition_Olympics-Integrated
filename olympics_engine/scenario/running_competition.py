@@ -31,6 +31,7 @@ class Running_competition(OlympicsBase):
                     a.color = agent2_color
                     a.original_color = agent2_color
 
+
         self.meta_map = meta_map
         self.map_index = map_index
 

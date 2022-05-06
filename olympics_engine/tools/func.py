@@ -203,7 +203,7 @@ def point_rotate(center, point, theta):
     new_y = px * ny[0] + py * ny[1]
     return [new_x, new_y]
 
-def DDA_line(matrix, draw_line, vis, vis_clear, value, view_back=0):
+def DDA_line(matrix, draw_line, vis, vis_clear, value, view_back):
     size = int(vis/vis_clear)
     assert matrix.shape[0] == size
     if len(draw_line) == 1:

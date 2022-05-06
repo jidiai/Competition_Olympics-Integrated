@@ -208,10 +208,6 @@ class table_hockey(OlympicsBase):
                 else:
                     return '1'
 
-
-
-
-
     def render(self, info=None):
 
         if self.minimap_mode:
@@ -220,7 +216,7 @@ class table_hockey(OlympicsBase):
 
             if not self.display_mode:
                 self.viewer.set_mode()
-                self.display_mode=True
+                self.display_mode = True
                 if self.beauty_render:
                     self._load_image()
 
@@ -241,27 +237,27 @@ class table_hockey(OlympicsBase):
 
         if self.draw_obs:
             if len(self.obs_list) > 0:
-                self.viewer.draw_view(self.obs_list, self.agent_list, leftmost_x=450, upmost_y=10, gap = 130, energy_width=0 if self.beauty_render else 5)
+                self.viewer.draw_view(self.obs_list, self.agent_list, leftmost_x=450, upmost_y=10, gap=130,
+                                      energy_width=0 if self.beauty_render else 5)
 
         if self.show_traj:
             self.get_trajectory()
             self.viewer.draw_trajectory(self.agent_record, self.agent_list)
 
         self.viewer.draw_direction(self.agent_pos, self.agent_accel)
-        #self.viewer.draw_map()
+        # self.viewer.draw_map()
 
         # debug('mouse pos = '+ str(pygame.mouse.get_pos()))
         debug('Step: ' + str(self.step_cnt), x=30)
         if info is not None:
             debug(info, x=100)
 
-
         for event in pygame.event.get():
             # 如果单击关闭窗口，则退出
             if event.type == pygame.QUIT:
                 sys.exit()
         pygame.display.flip()
-        #self.viewer.background.fill((255, 255, 255))
+        # self.viewer.background.fill((255, 255, 255))
 
 
     def _load_image(self):
@@ -337,7 +333,7 @@ class table_hockey(OlympicsBase):
             color = agent_list[i].color
             theta = direction_list[i][0]
             vis = agent_list[i].visibility
-
+            view_back = self.VIEW_BACK*vis if vis is not None else 0
             if agent.type == 'agent':
                 if color == self.agent1_color:
                     player_image_size = self.player_1_image.get_size()
@@ -347,7 +343,7 @@ class table_hockey(OlympicsBase):
                     view_image = pygame.transform.scale(self.player_1_view_image, size = (vis, vis))
                     rotate_view_image = pygame.transform.rotate(view_image, -theta)
 
-                    new_view_center = [t[0]+100*math.cos(theta*math.pi/180), t[1]+100*math.sin(theta*math.pi/180)]
+                    new_view_center = [t[0]+(vis/2-view_back)*math.cos(theta*math.pi/180), t[1]+(vis/2-view_back)*math.sin(theta*math.pi/180)]
                     new_view_rect = rotate_view_image.get_rect(center=new_view_center)
                     self.viewer.background.blit(rotate_view_image, new_view_rect)
 
@@ -364,7 +360,7 @@ class table_hockey(OlympicsBase):
                     view_image = pygame.transform.scale(self.player_2_view_image, size = (vis, vis))
                     rotate_view_image = pygame.transform.rotate(view_image, -theta)
 
-                    new_view_center = [t[0]+100*math.cos(theta*math.pi/180), t[1]+100*math.sin(theta*math.pi/180)]
+                    new_view_center = [t[0]+(vis/2-view_back)*math.cos(theta*math.pi/180), t[1]+(vis/2-view_back)*math.sin(theta*math.pi/180)]
                     new_view_rect = rotate_view_image.get_rect(center=new_view_center)
                     self.viewer.background.blit(rotate_view_image, new_view_rect)
 

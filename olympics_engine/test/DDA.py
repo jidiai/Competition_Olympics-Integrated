@@ -1,3 +1,4 @@
+import math
 import sys
 from pathlib import Path
 base_path = str(Path(__file__).resolve().parent.parent)
@@ -180,8 +181,8 @@ def check_on_line(point, A, B, C, l1, l2):
     return False
 
 
-print('arc line intersection', arc_line_intersect(line=[[250, 600], [300, 0]], arc_center=[300, 350],
-                                                  arc_start_radian=0*math.pi/180, arc_end_radian=-100*math.pi/180, arc_R=200))
+# print('arc line intersection', arc_line_intersect(line=[[250, 600], [300, 0]], arc_center=[300, 350],
+#                                                   arc_start_radian=0*math.pi/180, arc_end_radian=-100*math.pi/180, arc_R=200))
 
 
 def bresenham_arc(matrix, draw_arc, vis, vis_clear, value):
@@ -201,10 +202,119 @@ def bresenham_arc(matrix, draw_arc, vis, vis_clear, value):
     arc_center = draw_arc.get('arc center')
     arc_R = draw_arc.get('arc R')
 
+    x1, y1 = start_point
+    y1 += vis / 2
+    x1 /= vis_clear
+    y1 /= vis_clear
+
+    #transfrom to interval [0, pi/4]
+
+def quarter_circle_drawing(matrix, circle_center, vis_clear, circle_r, start_radian, end_radian):
+    """
+    draw arc within angle range [0, pi/4], right is positive x, down is positive y
+    start_radian and end_radian should be within the range of [0,4/pi], [4/pi, 2/pi], [2/pi,3pi/2],[3pi/2, pi]; [-4/pi, 0], [-pi/2, pi/4],
+    [-3pi/2, -pi/2], [-pi, -3pi/2]
+    """
+    if 0 <= start_radian < math.pi/4 and start_radian <= end_radian < math.pi/4:
+        quarter = '1'
+    elif math.pi/4 <= start_radian < math.pi/2 and start_radian <= end_radian < math.pi/2:
+        quarter = '2'
+    elif math.pi/2 <= start_radian < math.pi*3/4 and start_radian <= end_radian < math.pi*3/4:
+        quarter = '3'
+    elif math.pi*3/4 <= start_radian <= math.pi and start_radian <= end_radian <= math.pi:
+        quarter = '4'
+    elif -math.pi <= start_radian < -math.pi*3/4 and start_radian <= end_radian < -math.pi*3/4:
+        quarter = '-4'
+    elif -math.pi*3/4 <= start_radian < -math.pi/2 and start_radian <= end_radian < -math.pi/2:
+        quarter = '-3'
+    elif -math.pi/2 <= start_radian < -math.pi/4 and start_radian <= end_radian < -math.pi/4:
+        quarter = '-2'
+    elif -math.pi/4 <= start_radian < 0 and start_radian <= end_radian < 0:
+        quarter = '-1'
+    else:
+        raise NotImplementedError
+    quarter = '1'
+    
+    size = matrix.shape[0]
+    #start from initial point
+    x,y = circle_r, 0
+    while x>=-y:
+        left_p = [x-1, y-1]
+        top_p = [x, y-1]
+        d_left = (left_p[0])**2 + (left_p[1])**2 - circle_r**2
+        d_top = (top_p[0])**2 + (top_p[1])**2 - circle_r**2
+        P_k = d_left + d_top
+        if P_k >= 0:
+            next_x, next_y = x-1, y-1
+        else:
+            next_x, next_y = x, y-1
+
+        if 0 < x + circle_center[0] < size and -size/2 < y+circle_center[1] < size/2 and quarter == '1':
+            if quarter == '1':
+                plot_y = y + size/2 + circle_center[1]
+                plot_x = x + circle_center[0]
+                matrix[int(plot_y)][int(plot_x)] = 1
+
+        if 0 < x + circle_center[0] < size and -size/2 < y-circle_center[1] < size/2 and quarter == '1':        #4
+            # elif quarter == '4':
+                plot_y = y + size/2 - circle_center[1]
+                plot_x = x + circle_center[0]
+                matrix[-int(plot_y)][int(plot_x)] = 1
+
+        if 0 < x + circle_center[0]+size/2 < size and 0 < y+circle_center[1] < size and quarter == '1':        #2
+
+                plot_y = x +size/2+ circle_center[0]
+                plot_x = y  + circle_center[1]
+                matrix[-int(plot_y)][-int(plot_x)] = 1
+
+
+        x,y = next_x, next_y
+    return matrix
+
+plot_matrix = np.zeros((40,40))
+plot_matrix = quarter_circle_drawing(matrix=plot_matrix, circle_center = [0,0], vis_clear=8, circle_r = 20, start_radian=0, end_radian=0.1)
+plt.imshow(plot_matrix)
+plt.show()
+
+raise NotImplementedError
 
 
 
-
+# def quarter_circle_drawing(matrix, start_point, start_radian, end_point, end_radian, circle_center, circle_r, vis_clear):
+#     size = matrix.shape[0]
+#     circle_center[0] /= vis_clear
+#     circle_center[1] /= vis_clear
+#     circle_r /= vis_clear
+# 
+#     x, y = (circle_center[0]+circle_r, circle_center[1])      #start from this
+#     rad1 = 0
+#     while x>=y:
+#         left_p = (x-1, y+1)
+#         top_p = (x, y+1)
+#         d_left = (left_p[0]-circle_center[0])**2 + (left_p[1]-circle_center[1])**2 - circle_r**2
+#         d_top = (top_p[0]-circle_center[0])**2 + (top_p[1]-circle_center[1])**2 - circle_r**2
+#         P_k = d_left + d_top
+#         if P_k >= 0:
+#             x_next, y_next = x-1, y+1
+#         else:
+#             x_next, y_next = x, y+1
+# 
+#         if -size < x < size and 0<=y <size:
+#             plot_x = x + size/2
+#             plot_y = y
+#             matrix[-int(plot_y)][int(plot_x)] = 1
+# 
+#         x, y = x_next, y_next
+# 
+#     return matrix
+# 
+# 
+# plot_matrix = np.zeros((40,40))
+# plot_matrix = quarter_circle_drawing(matrix = plot_matrix, start_point=[25, 5], start_radian=0, end_point = [], end_radian=0, circle_center=[-10, -10],
+#                                      circle_r = 30, vis_clear=5)
+# plt.imshow(plot_matrix)
+# plt.show()
+# raise NotImplementedError
 
 
 
@@ -252,7 +362,7 @@ class env_test(OlympicsBase):
         #return self.agent_pos, self.agent_v, self.agent_accel, self.agent_theta, obs_next, step_reward, done
         return obs_next, step_reward, done, ''
 
-    def get_obs1(self):
+    def get_obs(self):
         self.obs_boundary = list()
 
         obs_list = list()
@@ -268,6 +378,8 @@ class env_test(OlympicsBase):
             agent_pos = self.agent_pos
             agent_x, agent_y = agent_pos[agent_idx][0], agent_pos[agent_idx][1]
             theta = theta_copy
+            if theta != 0:
+                theta = abs(theta)%360 * (theta/abs(theta))     #normalise the angle
             position_init = agent.position_init
 
             visibility = self.agent_list[agent_idx].visibility
@@ -401,13 +513,29 @@ class env_test(OlympicsBase):
 
 
                 elif obj.type == 'arc':
-                    continue
+                    # continue
                     current_center = obj.center
                     current_R = obj.R
                     current_start_radian, current_end_radian = obj.start_radian, obj.end_radian
                     obj.rotate_center = point_rotate([agent_x, agent_y], current_center, theta)
-                    obj.rotate_start_radian = current_start_radian + theta/180*math.pi
-                    obj.rotate_end_radian = current_end_radian + theta/180*math.pi
+                    rotate_start_radian = current_start_radian + theta/180*math.pi
+                    rotate_end_radian = current_end_radian + theta/180*math.pi
+
+                    if rotate_start_radian > math.pi:
+                        rotate_start_radian -= 2*math.pi
+                    elif rotate_start_radian < -math.pi:
+                        rotate_start_radian += 2*math.pi
+
+                    if rotate_end_radian > math.pi:
+                        rotate_end_radian -= 2*math.pi
+                    elif rotate_end_radian < -math.pi:
+                        rotate_end_radian += 2*math.pi
+
+                    assert -math.pi <= rotate_start_radian <= math.pi, print(rotate_start_radian)
+                    assert -math.pi <= rotate_end_radian <= math.pi, print(rotate_end_radian)
+
+                    obj.rotate_start_radian = rotate_start_radian
+                    obj.rotate_end_radian = rotate_end_radian
 
                     intersect_p = []
                     rotate_boundary = [[[0, -visibility / 2], [0, visibility / 2]],
@@ -495,7 +623,7 @@ class env_test(OlympicsBase):
 
 
 
-
+                    print('draw arc = ', draw_arc_dict)
                     # obs_map = bresenham_arc(obs_map, draw_arc_dict, visibility, v_clear, value=COLOR_TO_IDX[obj.color])
 
 
@@ -842,7 +970,7 @@ for _ in range(100):
         # action = [[random.uniform(0,1)*10, random.uniform(-30,30)]]
         # action2 = [100+random.uniform(0,1)*15, 0]
         # action = [[200, 0] for _ in range(1)]
-        action = [[0,1]]
+        action = [[0,0]]
         # action = [action]
         _,_,done, _ = env.step(action)
 

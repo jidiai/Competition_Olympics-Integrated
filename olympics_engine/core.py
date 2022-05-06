@@ -42,7 +42,7 @@ class OlympicsBase(object):
 
         self.agent_record = []
 
-        self.show_traj = False
+        self.show_traj = True
         self.draw_obs = True
         self.print_log = False
         self.print_log2 = False
@@ -906,7 +906,6 @@ class OlympicsBase(object):
                                        [[visibility-view_back, visibility / 2], [visibility-view_back, -visibility / 2]],
                                        [[visibility-view_back, -visibility / 2], [0-view_back, -visibility / 2]]]
 
-
                     # obs_rotate_boundary = []              #debug rotate boundary
                     # for line in self.obs_boundary:
                     #     rotate_bound = [point_rotate([agent_x, agent_y], i, theta) for i in line]
@@ -926,7 +925,6 @@ class OlympicsBase(object):
                         point_1_in_view=  0 < obj.rotate_pos[0][0]+view_back < visibility and abs(obj.rotate_pos[0][1]) < visibility / 2
                         point_2_in_view = 0 < obj.rotate_pos[1][0]+view_back < visibility and abs(obj.rotate_pos[1][1]) < visibility / 2
 
-
                         if point_1_in_view and point_2_in_view:
                             draw_line.append(obj.rotate_pos[0])
                             draw_line.append(obj.rotate_pos[1])
@@ -942,7 +940,7 @@ class OlympicsBase(object):
                         if 0 < obj.rotate_pos[0][0]+view_back < visibility and abs(
                                 obj.rotate_pos[0][1]) < visibility / 2:
                             draw_line.append(obj.rotate_pos[0])
-                        elif 0 < obj.rotate_pos[1][0] + view_back < visibility and abs(
+                        elif 0 < obj.rotate_pos[1][0]+view_back < visibility and abs(
                                 obj.rotate_pos[1][1]) < visibility / 2:
                             draw_line.append(obj.rotate_pos[1])
                         else:
@@ -956,7 +954,6 @@ class OlympicsBase(object):
 
                     elif len(intersect_p) == 3:     #if line aligns with boundary
                         continue
-
                     else:
                         raise ValueError('ERROR: multiple intersection points in DDA')
 

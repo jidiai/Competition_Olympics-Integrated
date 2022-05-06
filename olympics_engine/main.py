@@ -90,7 +90,7 @@ if __name__ == "__main__":
             agent_num = 2
 
         elif args.map == 'all':
-            game = AI_Olympics(random_selection = True, minimap=False)
+            game = AI_Olympics(random_selection = False, minimap=False)
             agent_num = 2
 
         agent = random_agent()
@@ -113,10 +113,10 @@ if __name__ == "__main__":
             #action2 = [100,0] #rand_agent.act(obs)
             if agent_num == 2:
                 action1, action2 = agent.act(obs[0]), rand_agent.act(obs[1])
-                # action1 = [0,0]
+                # action1 = [100,1]
 
                 # action1 =[50,1]
-                # action2 = [200,0]
+                # action2 = [50,-1]
 
 
                 action = [action1, action2]
