@@ -12,7 +12,7 @@ rl_trainer is added, serving as an example on how to train an RL agents.
 <img src=https://github.com/jidiai/Competition_Olympics-Integrated/blob/main/olympics_engine/assets/multi-task-olympics.gif width=600>
 
 
-Check details in Jidi Competition [IJCAI-ECAI 2022 AI Qlympics Competition](http://www.jidiai.cn/compete_detail?compete=17)
+Check details in Jidi Competition [IJCAI-ECAI 2022 AI Qlympics Competition](http://www.jidiai.cn/compete_detail?compete=17) and [WAIC 2022 AI Qlympics Competition](http://www.jidiai.cn/compete_detail?compete=18)
 
 
 ### Olympics-Integrated
@@ -36,7 +36,7 @@ Check details in Jidi Competition [IJCAI-ECAI 2022 AI Qlympics Competition](http
 
 <b>Environment ends condition: </b>The game ends when all subgames are finished.
 
-<b>Registration: </b>Go to (http://www.jidiai.cn/compete_detail?compete=17).
+<b>Registration: </b>Go to (http://www.jidiai.cn/compete_detail?compete=17 and http://www.jidiai.cn/compete_detail?compete=18).
 
 
 ---
