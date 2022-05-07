@@ -104,6 +104,7 @@ def main(args):
     train_count = 0
 
     while episode < args.max_episodes:
+        env = make(args.game_name)          #rebuild each time to shuffle the running map
         state = env.reset()
         if RENDER:
             env.env_core.render()
