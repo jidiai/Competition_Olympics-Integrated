@@ -30,7 +30,7 @@ from olympics_engine.agent import *
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--game_name', default="running-competition", type=str)
+parser.add_argument('--game_name', default="running-competition", type=str, help='running-competition/table-hockey/football/wrestling')
 parser.add_argument('--algo', default="ppo", type=str, help="ppo/sac")
 parser.add_argument('--max_episodes', default=1500, type=int)
 parser.add_argument('--episode_length', default=500, type=int)
@@ -129,8 +129,12 @@ def main(args):
         state = env.reset()
         if RENDER:
             env.render()
-        obs_ctrl_agent = state[ctrl_agent_index].flatten()  #np.array(state[ctrl_agent_index]['obs']).flatten()     #[25*25]
-        obs_oppo_agent = state[1-ctrl_agent_index]
+        if isinstance(state[ctrl_agent_index], type({})):
+            obs_ctrl_agent, energy_ctrl_agent = state[ctrl_agent_index]['agent_obs'].flatten(), env.agent_list[ctrl_agent_index].energy
+            obs_oppo_agent, energy_oppo_agent = state[1-ctrl_agent_index]['agent_obs'], env.agent_list[1-ctrl_agent_index].energy
+        else:
+            obs_ctrl_agent, energy_ctrl_agent = state[ctrl_agent_index].flatten(), env.agent_list[ctrl_agent_index].energy
+            obs_oppo_agent, energy_oppo_agent = state[1-ctrl_agent_index], env.agent_list[1-ctrl_agent_index].energy
 
         episode += 1
         step = 0
@@ -148,8 +152,12 @@ def main(args):
 
             next_state, reward, done, _ = env.step(action)
 
-            next_obs_ctrl_agent = next_state[ctrl_agent_index]
-            next_obs_oppo_agent = next_state[1-ctrl_agent_index]
+            if isinstance(next_state[ctrl_agent_index], type({})):
+                next_obs_ctrl_agent, next_energy_ctrl_agent = next_state[ctrl_agent_index]['agent_obs'].flatten(), env.agent_list[ctrl_agent_index].energy
+                next_obs_oppo_agent, next_energy_oppo_agent = next_state[1-ctrl_agent_index]['agent_obs'], env.agent_list[1-ctrl_agent_index].energy
+            else:
+                next_obs_ctrl_agent, next_energy_ctrl_agent = next_state[ctrl_agent_index], env.agent_list[ctrl_agent_index].energy
+                next_obs_oppo_agent, next_energy_oppo_agent = next_state[1-ctrl_agent_index], env.agent_list[1-ctrl_agent_index].energy
 
             step += 1
 
@@ -166,8 +174,9 @@ def main(args):
                                    next_obs_ctrl_agent, done)
                 model.store_transition(trans)
 
-            obs_oppo_agent = next_obs_oppo_agent
-            obs_ctrl_agent = np.array(next_obs_ctrl_agent).flatten()
+            obs_oppo_agent, energy_oppo_agent = next_obs_oppo_agent, next_energy_oppo_agent
+            obs_ctrl_agent, energy_ctrl_agent = np.array(next_obs_ctrl_agent).flatten(), next_energy_ctrl_agent
+
             if RENDER:
                 env.render()
             Gt += reward[ctrl_agent_index] if done else -1
