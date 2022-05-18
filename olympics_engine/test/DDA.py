@@ -31,7 +31,7 @@ gamemap['agents'].append(Agent(position = [290,100], mass=1, r=15, color='purple
 
 
 
-gamemap['view'] = {'width': 600, 'height':600, 'edge': 50, "init_obs": [180]}
+gamemap['view'] = {'width': 600, 'height':600, 'edge': 50, "init_obs": [-1]}
 
 
 def point_rotate(center, point, theta):
@@ -54,8 +54,8 @@ def DDA_line(matrix, draw_line, vis, vis_clear, value):
         x1 /= vis_clear
         y1 /= vis_clear
 
-        x = x1+0.5
-        y = y1+0.5
+        x = x1-0.5
+        y = y1-0.5
         matrix[size-int(x)][int(y)] = 1
         return matrix
 
@@ -193,48 +193,144 @@ def bresenham_arc(matrix, draw_arc, vis, vis_clear, value):
     assert matrix.shape[0] == size
 
 
-    start_point = draw_arc.get('start point')
+    # start_point = draw_arc.get('start point')
     start_radian = draw_arc.get('start radian')
-    end_point = draw_arc.get('end_point', None)
+    # end_point = draw_arc.get('end_point', None)
     end_radian = draw_arc.get('end radian', None)
-    arc_start_radian = draw_arc.get('arc start radian')
-    arc_end_radian = draw_arc.get('arc end radian')
-    arc_center = draw_arc.get('arc center')
+    # arc_start_radian = draw_arc.get('arc start radian')
+    # arc_end_radian = draw_arc.get('arc end radian')
+    arc_center = draw_arc.get('arc center')     #rotate center
     arc_R = draw_arc.get('arc R')
 
-    x1, y1 = start_point
-    y1 += vis / 2
-    x1 /= vis_clear
-    y1 /= vis_clear
+    # x1, y1 = start_point
+    # y1 += vis / 2
+    # x1 /= vis_clear
+    # y1 /= vis_clear
+    cx, cy = arc_center
+    cx /= vis_clear
+    cy /= vis_clear
 
-    #transfrom to interval [0, pi/4]
+    quarter = [[0,math.pi/4], [math.pi/4, math.pi/2], [math.pi/2, math.pi*3/4], [math.pi*3/4, math.pi],
+               [-math.pi/4, 0], [-math.pi/2, -math.pi/4], [-math.pi*3/4, -math.pi/2], [-math.pi, -math.pi*3/4]]
 
-def quarter_circle_drawing(matrix, circle_center, vis_clear, circle_r, start_radian, end_radian):
+    for q in quarter:
+        a,b = q
+        if start_radian <= end_radian:      #
+            a_in_range = get_obs_check_radian(start_radian = start_radian, end_radian = end_radian, angle = a)
+            b_in_range = get_obs_check_radian(start_radian = start_radian, end_radian = end_radian, angle = b)
+            if not a_in_range and not b_in_range:
+                if a <= start_radian <= end_radian <= b:
+                    matrix = quarter_circle_drawing(matrix, [cx, cy], arc_R/vis_clear, start_radian, end_radian, value)
+                else:
+                    pass
+            elif a_in_range and not b_in_range:
+                matrix = quarter_circle_drawing(matrix, [cx, cy], arc_R/vis_clear, a, end_radian, value)
+            elif not a_in_range and b_in_range:
+                matrix = quarter_circle_drawing(matrix, [cx, cy], arc_R/vis_clear, start_radian, b, value)
+
+            elif a_in_range and b_in_range:
+                assert start_radian <= a <= b <= end_radian
+                matrix = quarter_circle_drawing(matrix, [cx, cy], arc_R/vis_clear, a, b, value)
+
+
+
+        elif start_radian > end_radian:
+            start_radian1 = start_radian
+            end_radian1 = math.pi
+            start_radian2 = -math.pi
+            end_radian2 = end_radian
+            assert start_radian1 <= end_radian1 and start_radian2 <= end_radian2
+
+            #range1
+            a_in_range = get_obs_check_radian(start_radian = start_radian1, end_radian = end_radian1, angle = a)
+            b_in_range = get_obs_check_radian(start_radian = start_radian1, end_radian = end_radian1, angle = b)
+            if not a_in_range and not b_in_range:
+                if a <= start_radian1 <= end_radian1 <= b:
+                    matrix = quarter_circle_drawing(matrix, [cx, cy], arc_R/vis_clear, start_radian1, end_radian1, value)
+                else:
+                    pass
+            elif a_in_range and not b_in_range:
+                matrix = quarter_circle_drawing(matrix, [cx, cy], arc_R/vis_clear, a, end_radian1,value)
+            elif not a_in_range and b_in_range:
+                matrix = quarter_circle_drawing(matrix, [cx, cy], arc_R/vis_clear, start_radian1, b, value)
+            elif a_in_range and b_in_range:
+                assert start_radian1 <= a <= b <= end_radian1
+                matrix = quarter_circle_drawing(matrix, [cx, cy], arc_R/vis_clear, a, b, value)
+
+            #range2
+            a_in_range = get_obs_check_radian(start_radian = start_radian2, end_radian = end_radian2, angle = a)
+            b_in_range = get_obs_check_radian(start_radian = start_radian2, end_radian = end_radian2, angle = b)
+            if not a_in_range and not b_in_range:
+                if a <= start_radian2 <= end_radian2 <= b:
+                    matrix = quarter_circle_drawing(matrix, [cx, cy], arc_R/vis_clear, start_radian2, end_radian2, value)
+                else:
+                    pass
+            elif a_in_range and not b_in_range:
+                matrix = quarter_circle_drawing(matrix, [cx, cy], arc_R/vis_clear, a, end_radian2, value)
+            elif not a_in_range and b_in_range:
+                matrix = quarter_circle_drawing(matrix, [cx, cy], arc_R/vis_clear, start_radian2, b, value)
+            elif a_in_range and b_in_range:
+                assert start_radian2 <= a <= b <= end_radian2
+                matrix = quarter_circle_drawing(matrix, [cx, cy], arc_R/vis_clear, a, b, value)
+
+    return matrix
+
+
+
+
+
+
+
+
+def quarter_circle_drawing(matrix, circle_center, circle_r, start_radian, end_radian, value,rotate = True):
     """
     draw arc within angle range [0, pi/4], right is positive x, down is positive y
     start_radian and end_radian should be within the range of [0,4/pi], [4/pi, 2/pi], [2/pi,3pi/2],[3pi/2, pi]; [-4/pi, 0], [-pi/2, pi/4],
     [-3pi/2, -pi/2], [-pi, -3pi/2]
+    if not rotate:
+
+       |
+       |--------
+       |        |
+    ------------|-------> x
+       |        |
+       |--------
+       |
+       v y
+
+    elif rotate:
+
+           ^ x
+        ---|---
+       |   |   |
+       |   |   |
+       |   |   |
+    --------------> y
+           |
+
+
+
+
     """
-    if 0 <= start_radian < math.pi/4 and start_radian <= end_radian < math.pi/4:
+    if 0 <= start_radian < math.pi/4 and start_radian <= end_radian <= math.pi/4:
         quarter = '1'
-    elif math.pi/4 <= start_radian < math.pi/2 and start_radian <= end_radian < math.pi/2:
+    elif math.pi/4 <= start_radian < math.pi/2 and start_radian <= end_radian <= math.pi/2:
         quarter = '2'
-    elif math.pi/2 <= start_radian < math.pi*3/4 and start_radian <= end_radian < math.pi*3/4:
+    elif math.pi/2 <= start_radian < math.pi*3/4 and start_radian <= end_radian <= math.pi*3/4:
         quarter = '3'
     elif math.pi*3/4 <= start_radian <= math.pi and start_radian <= end_radian <= math.pi:
         quarter = '4'
-    elif -math.pi <= start_radian < -math.pi*3/4 and start_radian <= end_radian < -math.pi*3/4:
+    elif -math.pi <= start_radian < -math.pi*3/4 and start_radian <= end_radian <= -math.pi*3/4:
         quarter = '-4'
-    elif -math.pi*3/4 <= start_radian < -math.pi/2 and start_radian <= end_radian < -math.pi/2:
+    elif -math.pi*3/4 <= start_radian < -math.pi/2 and start_radian <= end_radian <= -math.pi/2:
         quarter = '-3'
-    elif -math.pi/2 <= start_radian < -math.pi/4 and start_radian <= end_radian < -math.pi/4:
+    elif -math.pi/2 <= start_radian < -math.pi/4 and start_radian <= end_radian <= -math.pi/4:
         quarter = '-2'
-    elif -math.pi/4 <= start_radian < 0 and start_radian <= end_radian < 0:
+    elif -math.pi/4 <= start_radian < 0 and start_radian <= end_radian <= 0:
         quarter = '-1'
     else:
         raise NotImplementedError
-    quarter = '1'
-    
+
     size = matrix.shape[0]
     #start from initial point
     x,y = circle_r, 0
@@ -249,34 +345,126 @@ def quarter_circle_drawing(matrix, circle_center, vis_clear, circle_r, start_rad
         else:
             next_x, next_y = x, y-1
 
-        if 0 < x + circle_center[0] < size and -size/2 < y+circle_center[1] < size/2 and quarter == '1':
-            if quarter == '1':
+        if quarter == '1':
+            if 0 < x + circle_center[0] < size and -size/2 < y+circle_center[1] < size/2:
                 plot_y = y + size/2 + circle_center[1]
                 plot_x = x + circle_center[0]
-                matrix[int(plot_y)][int(plot_x)] = 1
 
-        if 0 < x + circle_center[0] < size and -size/2 < y-circle_center[1] < size/2 and quarter == '1':        #4
-            # elif quarter == '4':
-                plot_y = y + size/2 - circle_center[1]
+                current_radian = math.atan2(-y, x)
+                if  start_radian <= current_radian <= end_radian:
+                    if rotate:
+                        matrix[-int(plot_x)][int(plot_y)] = value
+                    else:
+                        matrix[int(plot_y)][int(plot_x)] = value
+
+
+        elif quarter == '2':
+            if 0 < -y + circle_center[0] < size and -size/2 < -x+circle_center[1] < size/2:        #2
+                plot_y = -x + size/2 + circle_center[1]
+                plot_x = -y  + circle_center[0]
+
+                current_radian = math.atan2(x, -y)
+                if  start_radian <= current_radian <= end_radian:
+                    if rotate:
+                        matrix[-int(plot_x)][int(plot_y)] = value
+                    else:
+                        matrix[int(plot_y)][int(plot_x)] = value
+
+        elif quarter == '3':
+            if 0 < y + circle_center[0] < size and -size/2 < -x+circle_center[1] < size/2:        #3
+                plot_y = -x + size/2 + circle_center[1]
+                plot_x = y  + circle_center[0]
+
+                current_radian = math.atan2(x, y)
+                if  start_radian <= current_radian <= end_radian:
+                    if rotate:
+                        matrix[-int(plot_x)][int(plot_y)] = value
+                    else:
+                        matrix[int(plot_y)][int(plot_x)] = value
+
+        elif quarter == '4':
+            if 0 < -x + circle_center[0] < size and -size/2 < y+circle_center[1] < size/2:   # 4
+                plot_y = y + size/2 + circle_center[1]
+                plot_x = -x + circle_center[0]
+
+                current_radian = math.atan2(-y, -x)
+                if  start_radian <= current_radian <= end_radian:
+                    if rotate:
+                        matrix[-int(plot_x)][int(plot_y)] = value
+                    else:
+                        matrix[int(plot_y)][int(plot_x)] = value
+
+        elif quarter == '-1':
+            if 0 < x + circle_center[0] < size and -size/2 < -y+circle_center[1] < size/2:        #-1
+                plot_y = -y + size/2 + circle_center[1]
                 plot_x = x + circle_center[0]
-                matrix[-int(plot_y)][int(plot_x)] = 1
 
-        if 0 < x + circle_center[0]+size/2 < size and 0 < y+circle_center[1] < size and quarter == '1':        #2
+                current_radian = math.atan2(y, x)
+                if  start_radian <= current_radian <= end_radian:
+                    if rotate:
+                        matrix[-int(plot_x)][int(plot_y)] = value
+                    else:
+                        matrix[int(plot_y)][int(plot_x)] = value
 
-                plot_y = x +size/2+ circle_center[0]
-                plot_x = y  + circle_center[1]
-                matrix[-int(plot_y)][-int(plot_x)] = 1
+        elif quarter == '-2':
+            if 0 < -y + circle_center[0] < size and -size/2 < x+circle_center[1] < size/2:        #-2
+                plot_y = x + size/2 + circle_center[1]
+                plot_x = -y  + circle_center[0]
+
+                current_radian = math.atan2(-x, -y)
+                if  start_radian <= current_radian <= end_radian:
+                    if rotate:
+                        matrix[-int(plot_x)][int(plot_y)] = value
+                    else:
+                        matrix[int(plot_y)][int(plot_x)] = value
+
+        elif quarter == '-3':
+            if 0 < y + circle_center[0] < size and -size/2 < x+circle_center[1] < size/2:        #-3
+                plot_y = x + size/2 + circle_center[1]
+                plot_x = y  + circle_center[0]
+
+                current_radian = math.atan2(-x, y)
+                if  start_radian <= current_radian <= end_radian:
+                    if rotate:
+                        matrix[-int(plot_x)][int(plot_y)] = value
+                    else:
+                        matrix[int(plot_y)][int(plot_x)] = value
+
+        elif quarter == '-4':
+
+            if 0 < -x + circle_center[0] < size and -size/2 < -y+circle_center[1] < size/2:   # -4
+
+                plot_y = -y + size/2 + circle_center[1]
+                plot_x = -x + circle_center[0]
+
+                current_radian = math.atan2(y, -x)
+                if  start_radian <= current_radian <= end_radian:
+                    if rotate:
+                        matrix[-int(plot_x)][int(plot_y)] = value
+                    else:
+                        matrix[int(plot_y)][int(plot_x)] = value
+
+
 
 
         x,y = next_x, next_y
+
     return matrix
 
 plot_matrix = np.zeros((40,40))
-plot_matrix = quarter_circle_drawing(matrix=plot_matrix, circle_center = [0,0], vis_clear=8, circle_r = 20, start_radian=0, end_radian=0.1)
-plt.imshow(plot_matrix)
-plt.show()
+draw_arc =  {'start point': [0.0, 50.25015644561822], 'end radian': 1.6208171836006666,
+             'end point': [142.28756555322954, 100.0], 'start radian': 0.848062078981481,
+             'arc start radian': 0.0, 'arc end radian': -1.7453292519943295, 'arc center': [10.0, 250.0], 'arc R': 200.0}
 
-raise NotImplementedError
+
+# draw_arc_dict = {'start radian': math.pi/2, 'end radian': -math.pi/2, "arc center": [90,-10], "arc R": 50}
+# plot_matrix = bresenham_arc(plot_matrix, draw_arc, vis=200, vis_clear=5, value = 1)
+## plot_matrix = quarter_circle_drawing(matrix=plot_matrix, circle_center = [0,10], circle_r = 20, start_radian=0., end_radian=math.pi/4, rotate = True)
+## plot_matrix = quarter_circle_drawing(matrix=plot_matrix, circle_center = [0,10], circle_r = 20, start_radian=math.pi/4., end_radian=math.pi/2, rotate = True)
+# plt.imshow(plot_matrix)
+# plt.show()
+#
+# raise NotImplementedError
 
 
 
@@ -581,12 +769,30 @@ class env_test(OlympicsBase):
                                              "arc center": obj.rotate_center, 'arc R': obj.R}
 
                     elif len(intersect_p) == 2:
-                        draw_arc_dict = {'start point': intersect_p[0]['point'],
-                                         'start radian': intersect_p[0]['rad'],
-                                         'end point': intersect_p[1]['point'],
-                                         'end radian': intersect_p[1]['rad'],
+                        max_rad = max(intersect_p[0]['rad'], intersect_p[1]['rad'])
+                        min_rad = min(intersect_p[0]['rad'], intersect_p[1]['rad'])
+                        if obj.rotate_start_radian <= obj.rotate_end_radian:
+                            start_rad = min_rad
+                            end_rad = max_rad
+                        else:
+                            if max_rad > 0 and min_rad <0:
+                                start_rad = max_rad
+                                end_rad = min_rad
+                            else:
+                                start_rad = min_rad
+                                end_rad = max_rad
+                        draw_arc_dict = {'start radian': start_rad,
+                                         'end radian': end_rad,
                                          'arc start radian': obj.rotate_start_radian, 'arc end radian': obj.rotate_end_radian,
                                          "arc center": obj.rotate_center, 'arc R': obj.R}
+
+
+                        # draw_arc_dict = {'start point': intersect_p[0]['point'],
+                        #                  'start radian': intersect_p[0]['rad'],
+                        #                  'end point': intersect_p[1]['point'],
+                        #                  'end radian': intersect_p[1]['rad'],
+                        #                  'arc start radian': obj.rotate_start_radian, 'arc end radian': obj.rotate_end_radian,
+                        #                  "arc center": obj.rotate_center, 'arc R': obj.R}
 
                     else:
                         #if there exists multiple intersection, we find the two extreme point radian
@@ -624,7 +830,7 @@ class env_test(OlympicsBase):
 
 
                     print('draw arc = ', draw_arc_dict)
-                    # obs_map = bresenham_arc(obs_map, draw_arc_dict, visibility, v_clear, value=COLOR_TO_IDX[obj.color])
+                    obs_map = bresenham_arc(obs_map, draw_arc_dict, visibility, v_clear, value=COLOR_TO_IDX[obj.color])
 
 
                     # elif len(intersect_p) == 1:

@@ -1247,6 +1247,39 @@
         }
       }
     },
+    "cross": {
+      "num": 2,
+      "objects": {
+        "component1": {
+          "initial_position": [
+            [
+              110,
+              235
+            ],
+            [
+              590,
+              515
+            ]
+          ],
+          "color": "grey",
+          "width": 2
+        },
+        "component2": {
+          "initial_position": [
+            [
+              110,
+              515
+            ],
+            [
+              590,
+              235
+            ]
+          ],
+          "color": "grey",
+          "width": 2
+        }
+      }
+    },
     "arc": {
       "num": 4,
       "objects": {
@@ -1257,7 +1290,7 @@
           "start_radian": 90,
           "end_radian": 180,
           "passable": "True",
-          "color": "blue",
+          "color": "green",
           "collision_mode": 3,
           "width": 5
         },
@@ -1268,7 +1301,7 @@
           "start_radian": -180,
           "end_radian": -90,
           "passable": "True",
-          "color": "blue",
+          "color": "green",
           "collision_mode": 3,
           "width": 5
         },
@@ -1279,7 +1312,7 @@
           "start_radian": -90,
           "end_radian": 0,
           "passable": "True",
-          "color": "blue",
+          "color": "green",
           "collision_mode": 3,
           "width": 5
         },
@@ -1290,7 +1323,7 @@
           "start_radian": 0,
           "end_radian": 90,
           "passable": "True",
-          "color": "blue",
+          "color": "green",
           "collision_mode": 3,
           "width": 5
         }
@@ -1317,7 +1350,7 @@
           ],
           "mass": 1,
           "radius": 15,
-          "color": "sky blue",
+          "color": "blue",
           "vis": 200,
           "vis_clear": 5
         }
@@ -1333,7 +1366,7 @@
           ],
           "mass": 1,
           "radius": 15,
-          "color": "sky blue"
+          "color": "blue"
         },
         "component2": {
           "initial_position": [
@@ -1351,7 +1384,7 @@
           ],
           "mass": 1,
           "radius": 15,
-          "color": "sky blue"
+          "color": "blue"
         },
         "component4": {
           "initial_position": [
@@ -1369,7 +1402,7 @@
           ],
           "mass": 1,
           "radius": 15,
-          "color": "sky blue"
+          "color": "blue"
         },
         "component6": {
           "initial_position": [

@@ -45,7 +45,7 @@ class billiard_joint(OlympicsBase):
 
         self.max_n_hit = 3
 
-
+        self.cross_color = 'green'
         self.total_reward = 0
 
     def reset(self):
@@ -81,7 +81,6 @@ class billiard_joint(OlympicsBase):
         # self.current_team = 0
         self.pre_num = len(self.agent_list)-1
         self.team_score = [0, 0]
-        init_obs = self.get_obs()
 
         # self.player1_n_hit = 1
         # self.player2_n_hit = 0
@@ -104,6 +103,9 @@ class billiard_joint(OlympicsBase):
         self.num_ball_left = len(self.agent_list)-2
         self.pre_num_ball_left = len(self.agent_list)-2
 
+        init_obs = self.get_obs()
+        output_obs = self._build_from_raw_obs(init_obs)
+
         self.minimap_mode = False
 
         if self.minimap_mode:
@@ -123,9 +125,12 @@ class billiard_joint(OlympicsBase):
 
             image = pygame.surfarray.array3d(self.viewer.background).swapaxes(0,1)
 
-            return [{"agent_obs": init_obs, "minimap":image}, {"agent_obs": np.zeros_like(init_obs)-1, "minimap":None}]
+            output_obs[0]['minimap'] = image
+            output_obs[1]['minimap'] = image
 
-        return [init_obs, np.zeros_like(init_obs)-1]
+            # return [{"agent_obs": init_obs, "minimap":image}, {"agent_obs": np.zeros_like(init_obs)-1, "minimap":None}]
+        return output_obs
+        # return [init_obs, np.zeros_like(init_obs)-1]
 
     def check_overlap(self):
         pass
@@ -302,7 +307,7 @@ class billiard_joint(OlympicsBase):
         finals = []
         for object_idx in range(len(self.map['objects'])):
             object = self.map['objects'][object_idx]
-            if object.can_pass() and object.color == 'blue':
+            if object.can_pass() and object.color == self.cross_color:
                 #arc_pos = object.init_pos
                 finals.append(object)
 
@@ -322,7 +327,7 @@ class billiard_joint(OlympicsBase):
                             elif agent.color == self.agent2_color:
                                 self.white_ball_in[1] = True
 
-                        agent.color = 'blue'
+                        agent.color = self.cross_color
                         agent.finished = True
                         agent.alive = False
                         self.dead_agent_list.append(agent_idx)
@@ -455,28 +460,7 @@ class billiard_joint(OlympicsBase):
                 # elif j.color == 'green':
                 #     _output_obs_next[1] = next_obs[i]
 
-        return _output_obs_next
-
-
-
-        # next_obs = [x for x in next_obs if x is not None]
-        # if len(next_obs) == 0:
-        #     next_obs = [np.zeros((40,40))-1]
-        #
-        # if self.minimap_mode:
-        #     image = pygame.surfarray.array3d(self.viewer.background).swapaxes(0,1)
-        #
-        # _output_obs_next[self.current_team]["agent_obs"] = next_obs
-        # if self.minimap_mode:
-        #     _output_obs_next[self.current_team]["minimap"] = image
-        #
-        # _output_obs_next[1-self.current_team]["agent_obs"] = [np.zeros_like(i)-1 for i in next_obs]
-        # if self.minimap_mode:
-        #     _output_obs_next[1-self.current_team]["minimap"] = None
-
-        # _output_obs_next[self.current_team] = next_obs
-        # _output_obs_next[1-self.current_team] = [np.zeros_like(i)-1 for i in next_obs]
-        return _output_obs_next
+        return [{"agent_obs":_output_obs_next[0], "id":"team_0"}, {"agent_obs": _output_obs_next[1], "id":"team_1"}]
 
 
     def render(self, info=None):
