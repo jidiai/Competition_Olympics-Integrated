@@ -33,7 +33,7 @@ RENDER = True
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--map', default="all", type= str,
+    parser.add_argument('--map', default="curling-IJACA-competition", type= str,
                         help = 'running/table-hockey/football/wrestling/billiard/curling/all')
     parser.add_argument("--seed", default=1, type=int)
     args = parser.parse_args()
@@ -86,6 +86,9 @@ if __name__ == "__main__":
             agent_num = 2
 
         elif args.map == 'curling-competition':
+            game = curling_competition(Gamemap)
+            agent_num = 2
+        elif args.map == 'curling-IJACA-competition':
             game = curling_competition(Gamemap)
             agent_num = 2
 

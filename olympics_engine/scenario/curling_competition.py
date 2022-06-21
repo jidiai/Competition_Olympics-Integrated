@@ -12,44 +12,8 @@ import os
 import random
 import copy
 
-# color 宏
-COLORS = {
-    'red': [255, 0, 0],
-    'green': [0, 255, 0],
-    'blue': [0, 0, 255],
-    'yellow': [255, 255, 0],
-    'grey':  [176,196,222],
-    'purple': [160, 32, 240],
-    'black': [0, 0, 0],
-    'white': [255, 255, 255],
-    'light green': [204, 255, 229],
-    'sky blue': [0,191,255]
-}
 
-COLOR_TO_IDX = {
-    'red': 7,
-    'green': 1,
-    'sky blue': 2,
-    'yellow': 3,
-    'grey': 4,
-    'purple': 5,
-    'black': 6,
-    'light green': 0,
-    'blue':8
-
-}
-
-IDX_TO_COLOR = {
-    0: 'light green',
-    1: 'green',
-    2: 'sky blue',
-    3: 'yellow',
-    4: 'grey',
-    5: 'purple',
-    6: 'black',
-    7: 'red',
-    8: 'blue'
-}
+from olympics_engine.tools.settings import COLORS, COLOR_TO_IDX, IDX_TO_COLOR
 
 grid_node_width = 2     #for view drawing
 grid_node_height = 2
@@ -83,14 +47,25 @@ class curling_competition(OlympicsBase):
         self.start_init_obs = 90
 
 
-        self.vis=300
-        self.vis_clear = 10
+        self.vis=map['env_cfg']['vis']
+        self.vis_clear = map['env_cfg']['vis']
+        self.team_0_color=map['env_cfg']['team_0_color']
+        self.team_1_color=map['env_cfg']['team_1_color']
 
         self.purple_rock = pygame.image.load(os.path.join(CURRENT_PATH, "assets/purple rock.png"))
         self.green_rock = pygame.image.load(os.path.join(CURRENT_PATH,"assets/green rock.png"))
+        self.red_rock = pygame.image.load(os.path.join(CURRENT_PATH, "assets/red rock.png"))
+        self.blue_rock = pygame.image.load(os.path.join(CURRENT_PATH,"assets/blue rock.png"))
         self.curling_ground = pygame.image.load(os.path.join(CURRENT_PATH, "assets/curling ground.png"))
         self.crown_image = pygame.image.load(os.path.join(CURRENT_PATH, "assets/crown.png"))
         # self.curling_ground.set_alpha(150)
+        if self.team_0_color == 'purple':
+            self.team_0_rock = self.purple_rock
+            self.team_1_rock = self.green_rock
+        elif  self.team_0_color == 'light red':
+            self.team_0_rock = self.red_rock
+            self.team_1_rock = self.blue_rock
+
         self.center = [300, 500]
 
     def reset(self, reset_game=False):
@@ -120,8 +95,8 @@ class curling_competition(OlympicsBase):
             self.num_green = 1
 
             map_copy = copy.deepcopy(self.map)
-            map_copy['agents'][0].color = 'green'
-            map_copy["agents"][0].original_color = 'green'
+            map_copy['agents'][0].color = self.team_1_color  #'green'
+            map_copy["agents"][0].original_color = self.team_1_color    #'green'
 
 
         else:
@@ -171,11 +146,11 @@ class curling_competition(OlympicsBase):
         #add new agent
         if self.current_team == 0:
             #team purple
-            new_agent_color = 'purple'
+            new_agent_color = self.team_0_color   #'purple'
             self.num_purple += 1
 
         elif self.current_team == 1:
-            new_agent_color = 'green'
+            new_agent_color = self.team_1_color  #'green'
             self.num_green += 1
 
         else:
@@ -427,7 +402,7 @@ class curling_competition(OlympicsBase):
             pos = self.agent_pos[i]
             distance = math.sqrt((pos[0]-center[0])**2 + (pos[1]-center[1])**2)
             if distance < min_dist and distance < (100+agent.r):        #within the circle is counted
-                win_team = 0 if agent.color == 'purple' else 1
+                win_team = 0 if agent.color == self.team_0_color else 1
                 min_dist = distance
 
         return win_team, min_dist
@@ -445,15 +420,15 @@ class curling_competition(OlympicsBase):
 
             if distance < (100 + agent.r):
 
-                if agent.color == 'purple':
+                if agent.color == self.team_0_color:  #'purple':
                     purple_dis.append(distance)
-                elif agent.color=='green':
+                elif agent.color== self.team_1_color:    #'green':
                     green_dis.append(distance)
                 else:
                     raise NotImplementedError
 
                 if distance < min_dist:
-                    closest_team = 0 if agent.color == 'purple' else 1
+                    closest_team = 0 if agent.color == self.team_0_color else 1
                     min_dist = distance
 
         purple_dis = np.array(sorted(purple_dis))
@@ -531,15 +506,15 @@ class curling_competition(OlympicsBase):
             #         self._draw_curling_view([None, self.obs_list[0]], [None, self.agent_list[-1]])
 
 
-            debug('Agent 0', x=570, y=110, c='purple')
+            debug('Agent 0', x=570, y=110, c=self.team_0_color)
             debug("No. throws left: ", x=470, y=140)
-            debug("{}".format(self.max_n - self.num_purple), x = 590, y=140, c='purple')
-            debug('Agent 1', x=640, y=110, c='green')
-            debug("{}".format(self.max_n - self.num_green), x=660, y = 140, c='green')
+            debug("{}".format(self.max_n - self.num_purple), x = 590, y=140, c=self.team_0_color)
+            debug('Agent 1', x=640, y=110, c=self.team_1_color)
+            debug("{}".format(self.max_n - self.num_green), x=660, y = 140, c=self.team_1_color)
             debug("Closest team:", x=470, y=170)
             debug("Score:", x=500, y = 200)
-            debug("{}".format(int(self.purple_game_point)), x=590, y=200, c='purple')
-            debug("{}".format(int(self.green_game_point)), x=660, y=200, c='green')
+            debug("{}".format(int(self.purple_game_point)), x=590, y=200, c=self.team_0_color)
+            debug("{}".format(int(self.green_game_point)), x=660, y=200, c=self.team_1_color)
 
 
 
@@ -609,12 +584,12 @@ class curling_competition(OlympicsBase):
             r = agent_list[i].r
             color = agent_list[i].color
 
-            if color == 'purple':
-                image_purple = pygame.transform.scale(self.purple_rock, size=(r * 2, r * 2))
+            if color == self.team_0_color:
+                image_purple = pygame.transform.scale(self.team_0_rock, size=(r * 2, r * 2))
                 loc = (t[0] - r, t[1] - r)
                 self.viewer.background.blit(image_purple, loc)
-            elif color == 'green':
-                image_green = pygame.transform.scale(self.green_rock, size=(r * 2, r * 2))
+            elif color == self.team_1_color:
+                image_green = pygame.transform.scale(self.team_1_rock, size=(r * 2, r * 2))
                 loc = (t[0] - r, t[1] - r)
                 self.viewer.background.blit(image_green, loc)
             else:
@@ -633,7 +608,7 @@ class curling_competition(OlympicsBase):
             color = agent_list[agent_idx].color
             r = agent_list[agent_idx].r
 
-            coord = 580 if color == 'purple' else 580+70
+            coord = 580 if color == self.team_0_color else 580+70
 
             obs_weight, obs_height = matrix.shape[0], matrix.shape[1]
             y = 40 - obs_height
@@ -645,12 +620,12 @@ class curling_competition(OlympicsBase):
                 y += grid_node_height
 
 
-            if color == 'purple':
-                image_purple = pygame.transform.scale(self.purple_rock, size=(r*2, r*2))
+            if color == self.team_0_color:
+                image_purple = pygame.transform.scale(self.team_0_rock, size=(r*2, r*2))
                 loc = [coord+15-r, 70 + agent_list[agent_idx].r-r]
                 self.viewer.background.blit(image_purple, loc)
-            elif color == 'green':
-                image_green = pygame.transform.scale(self.green_rock, size=(r*2, r*2))
+            elif color == self.team_1_color:
+                image_green = pygame.transform.scale(self.team_1_rock, size=(r*2, r*2))
                 loc = [coord+15-r, 70 + agent_list[agent_idx].r-r]
                 self.viewer.background.blit(image_green, loc)
             else:
@@ -661,7 +636,7 @@ class curling_competition(OlympicsBase):
             #                    agent_list[agent_idx].r, width=0)
             # pygame.draw.circle(self.background, COLORS["black"], [coord[agent_idx]+10, 55 + agent_list[agent_idx].r], 2,
             #                    width=0)
-            count = 0 if color == 'purple' else 1
+            count = 0 if color == self.team_0_color else 1
 
             pygame.draw.lines(self.viewer.background, points =[[563+70*count,10],[563+70*count, 70], [565+60+70*count,70], [565+60+70*count, 10]], closed=True,
                               color = COLORS[agent_list[agent_idx].color], width=2)

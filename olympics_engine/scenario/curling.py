@@ -320,8 +320,12 @@ class curling(OlympicsBase):
             return [{'agent_obs': obs[0], "minimap": image if self.minimap_mode else None, "id": "team_0"},
                     {'agent_obs': np.zeros_like(obs[0]) - 1, "minimap": None, "id": "team_1"}]
         elif self.current_team == 1:
-            return [{"agent_obs": np.zeros_like(obs[1]) - 1, "minimap": None, "id": "team_0"},
-                    {"agent_obs": obs[1], "minimap": image if self.minimap_mode else None, "id": "team_1"}]
+            if len(obs) == 1:       #first throw fails
+                return [{"agent_obs": np.zeros_like(obs[0]) - 1, "minimap": None, "id": "team_0"},
+                        {"agent_obs": obs[0], "minimap": image if self.minimap_mode else None, "id": "team_1"}]
+            else:
+                return [{"agent_obs": np.zeros_like(obs[1]) - 1, "minimap": None, "id": "team_0"},
+                        {"agent_obs": obs[1], "minimap": image if self.minimap_mode else None, "id": "team_1"}]
 
     def _build_minimap(self):
         #need to render first
