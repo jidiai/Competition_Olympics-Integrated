@@ -1,4 +1,4 @@
-from scenario import Running_competition, table_hockey, football, wrestling
+from scenario import Running_competition, table_hockey, football, wrestling, curling_competition, billiard_joint
 import sys
 from pathlib import Path
 base_path = str(Path(__file__).resolve().parent.parent)
@@ -24,16 +24,21 @@ class AI_Olympics:
         self.tablehockey_game = table_hockey(create_scenario("table-hockey"))
         self.football_game = football(create_scenario('football'))
         self.wrestling_game = wrestling(create_scenario('wrestling'))
+        self.curling_game = curling_competition(create_scenario('curling-IJACA-competition'))
+        self.billiard_game = billiard_joint(create_scenario("billiard-joint"))
 
         self.running_game.max_step = self.max_step
         self.tablehockey_game.max_step = self.max_step
         self.football_game.max_step = self.max_step
         self.wrestling_game.max_step = self.max_step
+        # self.curling_game.max_step =
 
         self.game_pool = [{"name": 'running-competition', 'game': self.running_game},
                           {"name": 'table-hockey', "game": self.tablehockey_game},
                            {"name": 'football', "game": self.football_game},
-                          {"name": 'wrestling', "game": self.wrestling_game}]
+                          {"name": 'wrestling', "game": self.wrestling_game},
+                          {"name": "curling", "game": self.curling_game},
+                          {"name": "billiard", "game": self.billiard_game}]
         self.view_setting = self.running_game.view_setting
 
     def reset(self):
@@ -79,7 +84,10 @@ class AI_Olympics:
             i['game_mode'] = ''
 
         for i,j in enumerate(obs):
-            j['energy'] = self.current_game.agent_list[i].energy
+            if 'curling' in self.current_game.game_name:
+                j['energy'] = 1000
+            else:
+                j['energy'] = self.current_game.agent_list[i].energy
 
         if done:
             winner = self.current_game.check_win()
@@ -101,7 +109,10 @@ class AI_Olympics:
                 for i in obs:
                     i['game_mode'] = 'NEW GAME'
                 for i,j in enumerate(obs):
-                    j['energy'] = self.current_game.agent_list[i].energy
+                    if 'curling' in self.current_game.game_name:
+                        j['energy'] = 1000
+                    else:
+                        j['energy'] = self.current_game.agent_list[i].energy
 
         if self.done:
             print('game score = ', self.game_score)
