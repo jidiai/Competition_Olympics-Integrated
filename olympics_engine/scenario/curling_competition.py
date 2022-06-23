@@ -182,6 +182,9 @@ class curling_competition(OlympicsBase):
         return self.get_obs()
 
     def _build_from_raw_obs(self, obs, info):
+
+        obs = obs[-1]
+
         if self.current_team == 0:
             encoded_obs = [obs, np.zeros_like(obs)-1]
         else:
@@ -314,6 +317,8 @@ class curling_competition(OlympicsBase):
                 self.game_round += 1
                 next_obs = self.reset(reset_game=True)
 
+                step_reward[0] /= 100
+                step_reward[1] /= 100
                 return next_obs, step_reward, False, 'game1 ends, switch position'
             else:
                 raise NotImplementedError
@@ -329,7 +334,8 @@ class curling_competition(OlympicsBase):
         # if self.release:
         #     h_gamma = self.down_area_gamma + random.uniform(-1, 1)*0.001
         #     self.gamma = h_gamma**self.faster
-
+        step_reward[0]/=100
+        step_reward[1]/=100
         #return self.agent_pos, self.agent_v, self.agent_accel, self.agent_theta, obs_next, step_reward, done
         return obs_next, step_reward, self.done, ''
 
