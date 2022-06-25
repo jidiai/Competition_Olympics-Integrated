@@ -88,6 +88,9 @@ if __name__ == "__main__":
         elif args.map == 'curling-competition':
             game = curling_competition(Gamemap)
             agent_num = 2
+        elif args.map == 'curling-IJACA-competition':
+            game = curling_competition(Gamemap)
+            agent_num = 2
 
         elif args.map == 'all':
             game = AI_Olympics(random_selection = False, minimap=False)

@@ -48,6 +48,8 @@ class billiard_joint(OlympicsBase):
         self.cross_color = 'green'
         self.total_reward = 0
 
+        self.game_name = 'billiard'
+
     def reset(self):
         self.agent_num = 0
         self.agent_list = []
@@ -129,6 +131,7 @@ class billiard_joint(OlympicsBase):
             output_obs[1]['minimap'] = image
 
             # return [{"agent_obs": init_obs, "minimap":image}, {"agent_obs": np.zeros_like(init_obs)-1, "minimap":None}]
+
         return output_obs
         # return [init_obs, np.zeros_like(init_obs)-1]
 
@@ -211,41 +214,23 @@ class billiard_joint(OlympicsBase):
 
     def step(self, actions_list):
 
-
-
         input_action = self.check_action(actions_list)
-
         self.stepPhysics(input_action, self.step_cnt)
-
         self.cross_detect(self.agent_pos)
-
         game_done = self.is_terminal()
-
-
-
         self.step_cnt += 1
-
-
         obs_next = self.get_obs()
 
         self.change_inner_state()
-
-
         # pre_ball_left = self.ball_left
         self.clear_agent()
-
-
         self.output_reward = self._build_from_raw_reward()
 
-
-        #check overlapping
-        #self.check_overlap()
 
         if not game_done:
             #reset white ball
             if np.logical_or(self.white_ball_in[0], self.white_ball_in[1]):
                 self.reset_cure_ball()
-
 
 
 
@@ -411,8 +396,27 @@ class billiard_joint(OlympicsBase):
         self.total_score[0] += reward[0]
         self.total_score[1] += reward[1]
 
+        if self.is_terminal():
+            if reward[0] > reward[1]:
+                reward[0] += 100
+            elif reward[1] > reward[0]:
+                reward[1] += 100
+            else:
+                pass
+
+        reward[0] /= 100
+        reward[1] /= 100
+
         return reward
 
+    def check_win(self):
+        total_reward = self.total_score
+        if total_reward[0]>total_reward[1]:
+            return '0'
+        elif total_reward[0]<total_reward[1]:
+            return '1'
+        else:
+            return '-1'
 
 
     def get_round_reward(self):
@@ -434,7 +438,7 @@ class billiard_joint(OlympicsBase):
         #step_reward = self.get_reward()
         # round_reawrd = self.get_round_reward()      #move it to if not done?
         return step_reward
-        _output_reward = {}
+        # _output_reward = {}
         # _output_reward[f"team_{self.current_team}"] = {"step_reward": step_reward, "round_reward": round_reawrd}
         # _output_reward[f"team_{1-self.current_team}"] = None
         # self.team_score[self.current_team] += round_reawrd['total'] if round_reawrd is not None else 0

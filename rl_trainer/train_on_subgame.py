@@ -30,14 +30,14 @@ from olympics_engine.agent import *
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--game_name', default="running-competition", type=str, help='running-competition/table-hockey/football/wrestling')
+parser.add_argument('--game_name', default="table-hockey", type=str, help='running-competition/table-hockey/football/wrestling')
 parser.add_argument('--algo', default="ppo", type=str, help="ppo/sac")
-parser.add_argument('--max_episodes', default=1500, type=int)
+parser.add_argument('--max_episodes', default=100000, type=int)
 parser.add_argument('--episode_length', default=500, type=int)
 
 parser.add_argument('--seed', default=1, type=int)
 
-parser.add_argument("--save_interval", default=100, type=int)
+parser.add_argument("--save_interval", default=1000, type=int)
 parser.add_argument("--model_episode", default=0, type=int)
 
 parser.add_argument("--load_model", action='store_true')
@@ -45,7 +45,7 @@ parser.add_argument("--load_run", default=2, type=int)
 parser.add_argument("--load_episode", default=900, type=int)
 
 
-device = 'cpu'
+device = 'cuda'
 RENDER = True
 actions_map = {0: [-100, -30], 1: [-100, -18], 2: [-100, -6], 3: [-100, 6], 4: [-100, 18], 5: [-100, 30], 6: [-40, -30],
                7: [-40, -18], 8: [-40, -6], 9: [-40, 6], 10: [-40, 18], 11: [-40, 30], 12: [20, -30], 13: [20, -18],
@@ -57,7 +57,7 @@ actions_map = {0: [-100, -30], 1: [-100, -18], 2: [-100, -6], 3: [-100, 6], 4: [
 
 def main(args):
     num_agents = 2
-    ctrl_agent_index = 1        #controlled agent index
+    ctrl_agent_index = 0        #controlled agent index
 
 
     if args.game_name == 'running-competition':
@@ -162,12 +162,12 @@ def main(args):
             step += 1
 
             if not done:
-                post_reward = [-1., -1.]
+                post_reward = [0, 0]
             else:
                 if reward[0] != reward[1]:
                     post_reward = [reward[0]-100, reward[1]] if reward[0]<reward[1] else [reward[0], reward[1]-100]
                 else:
-                    post_reward=[-1., -1.]
+                    post_reward=[0, 0]
 
             if not args.load_model:
                 trans = Transition(obs_ctrl_agent, action_ctrl_raw, action_prob, post_reward[ctrl_agent_index],
