@@ -33,7 +33,7 @@ RENDER = True
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--map', default="curling-IJACA-competition", type= str,
+    parser.add_argument('--map', default="all", type= str,
                         help = 'running/table-hockey/football/wrestling/billiard/curling/all')
     parser.add_argument("--seed", default=1, type=int)
     args = parser.parse_args()
@@ -134,7 +134,8 @@ if __name__ == "__main__":
             # action = [[200,action1[1]]]
 
             obs, reward, done, _ = game.step(action)
-            print(f'reward = {reward}')
+            if reward != [0,0]:
+                print(f'reward = {reward}')
             # print('obs = ', obs)
             # plt.imshow(obs[0])
             # plt.show()

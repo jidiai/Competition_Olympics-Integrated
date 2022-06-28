@@ -47,8 +47,8 @@ class curling_competition(OlympicsBase):
         self.start_init_obs = 90
 
 
-        self.vis=map['env_cfg']['vis']
-        self.vis_clear = map['env_cfg']['vis']
+        self.vis = map['env_cfg']['vis']
+        self.vis_clear = map['env_cfg']['vis_clear']
         self.team_0_color=map['env_cfg']['team_0_color']
         self.team_1_color=map['env_cfg']['team_1_color']
 
@@ -128,10 +128,11 @@ class curling_competition(OlympicsBase):
 
         obs = self.get_obs()
 
-        if self.current_team == 0:
-            return [obs, np.zeros_like(obs)-1]
-        else:
-            return [np.zeros_like(obs)-1, obs]
+        return self._build_from_raw_obs(obs, info='Reset Round' if reset_game else "Reset Game")
+        # if self.current_team == 0:
+        #     return [obs, np.zeros_like(obs)-1]
+        # else:
+        #     return [np.zeros_like(obs)-1, obs]
 
     def _reset_round(self):
         self.current_team = 1-self.current_team
@@ -180,8 +181,17 @@ class curling_competition(OlympicsBase):
 
         return self.get_obs()
 
+    def _build_from_raw_obs(self, obs, info):
 
+        obs = obs[-1]
 
+        if self.current_team == 0:
+            encoded_obs = [obs, np.zeros_like(obs)-1]
+        else:
+            encoded_obs = [np.zeros_like(obs)-1, obs]
+
+        return [{"agent_obs":encoded_obs[0], 'info': info, "id":"team_0"},
+                {"agent_obs": encoded_obs[1], 'info': info, "id":"team_1"}]
 
     def cross_detect(self):
         """
@@ -211,6 +221,7 @@ class curling_competition(OlympicsBase):
                         self.release = True
                         self.round_countdown = self.round_max_step-self.round_step
                     # if the ball hasnot pass the cross, the relase will be True again in the new round
+
     def check_action(self, action_list):
         action = []
         for agent_idx in range(len(self.agent_list)):
@@ -221,8 +232,6 @@ class curling_competition(OlympicsBase):
                 action.append(None)
 
         return action
-
-
 
     def step(self, actions_list):
 
@@ -245,9 +254,9 @@ class curling_competition(OlympicsBase):
         obs_next = self.get_obs()
 
 
-        done = self.is_terminal()
+        self.done = self.is_terminal()
 
-        if not done:
+        if not self.done:
             round_end, end_info = self._round_terminal()
             if round_end:
 
@@ -308,32 +317,27 @@ class curling_competition(OlympicsBase):
                 self.game_round += 1
                 next_obs = self.reset(reset_game=True)
 
+                step_reward[0] /= 100
+                step_reward[1] /= 100
                 return next_obs, step_reward, False, 'game1 ends, switch position'
             else:
                 raise NotImplementedError
 
 
 
-        if self.current_team == 0:
-            obs_next = [obs_next, np.zeros_like(obs_next)-1]
-        else:
-            obs_next = [np.zeros_like(obs_next)-1, obs_next]
+        # if self.current_team == 0:
+        #     obs_next = [obs_next, np.zeros_like(obs_next)-1]
+        # else:
+        #     obs_next = [np.zeros_like(obs_next)-1, obs_next]
+        obs_next = self._build_from_raw_obs(obs_next, info='')
 
         # if self.release:
         #     h_gamma = self.down_area_gamma + random.uniform(-1, 1)*0.001
         #     self.gamma = h_gamma**self.faster
-
+        step_reward[0]/=100
+        step_reward[1]/=100
         #return self.agent_pos, self.agent_v, self.agent_accel, self.agent_theta, obs_next, step_reward, done
-        return obs_next, step_reward, done, ''
-
-    # def get_obs_encode(self):
-    #     obs = self.get_obs()
-    #     if self.current_team == 0:
-    #         return [obs, np.zeros_like(obs)]
-    #     else:
-    #         return [np.zeros_like(obs), obs]
-
-
+        return obs_next, step_reward, self.done, ''
 
     def get_reward(self):
 
@@ -376,7 +380,7 @@ class curling_competition(OlympicsBase):
         L = []
         for agent_idx in range(self.agent_num):
             if (not self.agent_list[agent_idx].alive) and (self.agent_v[agent_idx][0] ** 2 +
-                                                        self.agent_v[agent_idx][1] ** 2) < 1e-1:
+                                                           self.agent_v[agent_idx][1] ** 2) < 1e-1:
                 L.append(True)
             else:
                 L.append(False)
@@ -453,6 +457,10 @@ class curling_competition(OlympicsBase):
 
         #print('purple dis = {}, green dis = {}'.format(purple_dis, green_dis))
 
+    def check_win(self):
+        if self.done:
+            return str(self.final_winner)
+
 
     def render(self, info=None):
 
@@ -485,8 +493,10 @@ class curling_competition(OlympicsBase):
         if self.draw_obs:
             if len(self.agent_list)!=0:
                 self.viewer.draw_obs(self.obs_boundary, self.agent_list)
-                self._draw_curling_view(self.obs_list, self.agent_list)
-
+                if self.team_0_color == 'purple':
+                    self._draw_curling_view1(self.obs_list, self.agent_list)
+                elif self.team_0_color == 'light red':
+                    self._draw_curling_view2(self.obs_list, self.agent_list)
 
             # if self.current_team == 0:
             #     self._draw_curling_view(self.obs_list, self.agent_list)
@@ -595,7 +605,7 @@ class curling_competition(OlympicsBase):
             else:
                 raise NotImplementedError
 
-    def _draw_curling_view(self, obs, agent_list):       #obs: [2, 100, 100] list
+    def _draw_curling_view1(self, obs, agent_list):       #obs: [2, 100, 100] list
 
         #draw agent 1, [50, 50], [50+width, 50], [50, 50+height], [50+width, 50+height]
         # coord = [580 + 70 * i for i in range(len(obs))]
@@ -639,6 +649,54 @@ class curling_competition(OlympicsBase):
             count = 0 if color == self.team_0_color else 1
 
             pygame.draw.lines(self.viewer.background, points =[[563+70*count,10],[563+70*count, 70], [565+60+70*count,70], [565+60+70*count, 10]], closed=True,
+                              color = COLORS[agent_list[agent_idx].color], width=2)
+
+            coord += 70
+
+    def _draw_curling_view2(self, obs, agent_list):       #obs: [2, 100, 100] list
+
+        #draw agent 1, [50, 50], [50+width, 50], [50, 50+height], [50+width, 50+height]
+        # coord = [580 + 70 * i for i in range(len(obs))]
+
+        for agent_idx in range(len(agent_list)):
+            matrix = obs[agent_idx]
+            if matrix is None:
+                continue
+
+            color = agent_list[agent_idx].color
+            r = agent_list[agent_idx].r
+
+            coord = 570 if color == self.team_0_color else 570+60
+
+            obs_weight, obs_height = matrix.shape[0], matrix.shape[1]
+            y = 40 - obs_height
+            for row in matrix:
+                x = coord- obs_height/2
+                for item in row:
+                    pygame.draw.rect(self.viewer.background, COLORS[IDX_TO_COLOR[int(item)]], [x,y,grid_node_width, grid_node_height])
+                    x+= grid_node_width
+                y += grid_node_height
+
+
+            if color == self.team_0_color:
+                image_purple = pygame.transform.scale(self.team_0_rock, size=(r*2, r*2))
+                loc = [coord+20-r, 78 + agent_list[agent_idx].r-r]
+                self.viewer.background.blit(image_purple, loc)
+            elif color == self.team_1_color:
+                image_green = pygame.transform.scale(self.team_1_rock, size=(r*2, r*2))
+                loc = [coord+20-r, 78 + agent_list[agent_idx].r-r]
+                self.viewer.background.blit(image_green, loc)
+            else:
+                raise NotImplementedError
+
+            #
+            # pygame.draw.circle(self.background, COLORS[agent_list[agent_idx].color], [coord[agent_idx]+10, 55 + agent_list[agent_idx].r],
+            #                    agent_list[agent_idx].r, width=0)
+            # pygame.draw.circle(self.background, COLORS["black"], [coord[agent_idx]+10, 55 + agent_list[agent_idx].r], 2,
+            #                    width=0)
+            count = 0 if color == self.team_0_color else 1
+
+            pygame.draw.lines(self.viewer.background, points =[[549+60*count,0],[549+60*count, 80], [549+80+60*count,80], [549+80+60*count, 0]], closed=True,
                               color = COLORS[agent_list[agent_idx].color], width=2)
 
             coord += 70
