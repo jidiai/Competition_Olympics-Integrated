@@ -218,6 +218,8 @@ class billiard_joint(OlympicsBase):
         self.stepPhysics(input_action, self.step_cnt)
         self.cross_detect(self.agent_pos)
         game_done = self.is_terminal()
+        self.output_reward = self._build_from_raw_reward()
+
         if not game_done:
             #reset white ball
             if np.logical_or(self.white_ball_in[0], self.white_ball_in[1]):
@@ -229,7 +231,7 @@ class billiard_joint(OlympicsBase):
         self.change_inner_state()
         # pre_ball_left = self.ball_left
         self.clear_agent()
-        self.output_reward = self._build_from_raw_reward()
+        # self.output_reward = self._build_from_raw_reward()
 
 
         # if not game_done:
@@ -400,6 +402,17 @@ class billiard_joint(OlympicsBase):
         # if not self.white_ball_in:
         self.total_score[0] += reward[0]
         self.total_score[1] += reward[1]
+
+        if self.is_terminal():
+            winner = self.check_win()
+            if winner == '0':
+                reward[0] += 100
+            elif winner == '1':
+                reward[1] += 100
+
+
+        reward[0] /= 100
+        reward[1] /= 100
 
         return reward
 
