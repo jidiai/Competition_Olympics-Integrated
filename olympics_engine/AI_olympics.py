@@ -31,7 +31,6 @@ class AI_Olympics:
         self.tablehockey_game.max_step = self.max_step
         self.football_game.max_step = self.max_step
         self.wrestling_game.max_step = self.max_step
-        # self.curling_game.max_step =
 
         self.game_pool = [{"name": 'running-competition', 'game': self.running_game},
                           {"name": 'table-hockey', "game": self.tablehockey_game},
@@ -39,6 +38,7 @@ class AI_Olympics:
                           {"name": 'wrestling', "game": self.wrestling_game},
                           {"name": "curling", "game": self.curling_game},
                           {"name": "billiard", "game": self.billiard_game}]
+
         self.view_setting = self.running_game.view_setting
 
     def reset(self):
@@ -69,12 +69,12 @@ class AI_Olympics:
         for i in init_obs:
             i['game_mode'] = 'NEW GAME'
 
-        if self.current_game.game_name == 'curling-competition':
-            for i,j in enumerate(init_obs):
+        for i,j in enumerate(init_obs):
+            if 'curling' in self.current_game.game_name:
                 j['energy'] = 1000
-        else:
-            for i,j in enumerate(init_obs):
+            else:
                 j['energy'] = self.current_game.agent_list[i].energy
+
 
         return init_obs
 
@@ -92,6 +92,7 @@ class AI_Olympics:
                 j['energy'] = 1000
             else:
                 j['energy'] = self.current_game.agent_list[i].energy
+
 
         if done:
             winner = self.current_game.check_win()

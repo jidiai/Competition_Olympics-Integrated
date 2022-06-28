@@ -380,7 +380,7 @@ class curling_competition(OlympicsBase):
         L = []
         for agent_idx in range(self.agent_num):
             if (not self.agent_list[agent_idx].alive) and (self.agent_v[agent_idx][0] ** 2 +
-                                                        self.agent_v[agent_idx][1] ** 2) < 1e-1:
+                                                           self.agent_v[agent_idx][1] ** 2) < 1e-1:
                 L.append(True)
             else:
                 L.append(False)

@@ -2163,8 +2163,8 @@
       "max_n": 3,
       "team_0_color": "light red",
       "team_1_color": "blue",
-      "vis": 200,
-      "vis_clear": 5
+      "vis": 320,
+      "vis_clear": 8
     },
     "obs_cfg": {
       "minimap": false
@@ -2322,8 +2322,8 @@
           "mass": 1,
           "radius": 15,
           "color": "light red",
-          "vis": 200,
-          "vis_clear": 5
+          "vis": 320,
+          "vis_clear": 8
         }
       }
     },
