@@ -90,6 +90,8 @@ class AI_Olympics:
         for i,j in enumerate(obs):
             if 'curling' in self.current_game.game_name:
                 j['energy'] = 1000
+            elif 'billiard' in self.current_game.game_name:
+                j['energy'] = self.current_game.agent_energy[i]
             else:
                 j['energy'] = self.current_game.agent_list[i].energy
 
