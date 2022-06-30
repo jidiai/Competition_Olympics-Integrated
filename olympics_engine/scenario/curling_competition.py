@@ -327,7 +327,7 @@ class curling_competition(OlympicsBase):
             elif self.game_round == 0:
 
                 self._clear_agent()
-                game1_winner = self.current_winner()
+                game1_winner, _ = self.current_winner()
                 step_reward = [10., 0] if game1_winner == 0 else [0., 10.]
                 self.cal_game_point()
                 self.game_round += 1
