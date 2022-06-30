@@ -79,10 +79,16 @@ class OlympicsIntegrated(Game):
             raise Exception("Input joint action dimension should be {}, not {}".format(
                 self.n_player, len(joint_action)))
 
+        for idx, team_action in enumerate(joint_action):
+            if not (-100 <= team_action[0][0] <= 200) or not (-30 <= team_action[1][0] <= 30):
+                joint_action[idx] = [[0],[0]]
+
+        return joint_action
+
     def step(self, joint_action):
-        self.is_valid_action(joint_action)
-        info_before = self.step_before_info()
+        joint_action = self.is_valid_action(joint_action)
         joint_action_decode = self.decode(joint_action)
+        info_before = self.step_before_info()
         all_observations, reward, done, info_after = self.env_core.step(joint_action_decode)
         info_after = ''
         self.current_state = all_observations

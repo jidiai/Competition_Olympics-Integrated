@@ -1974,7 +1974,11 @@
       "faster": 5,
       "field_gamma": 0.95,
       "round_max_step": 100,
-      "max_n": 4
+      "max_n": 4,
+      "team_0_color": "purple",
+      "team_1_color": "green",
+      "vis": 300,
+      "vis_clear": 10
     },
     "obs_cfg": {
       "minimap": false
@@ -2134,6 +2138,192 @@
           "color": "purple",
           "vis": 300,
           "vis_clear": 10
+        }
+      }
+    },
+    "view": {
+      "width": 600,
+      "height": 600,
+      "edge": 50,
+      "init_obs": [90]
+    }
+  },
+  "curling-IJACA-competition": {
+    "env_cfg": {
+      "tau": 0.1,
+      "gamma": 0.98,
+      "wall_restitution": 1,
+      "circle_restitution": 1,
+      "max_step": 500,
+      "energy_recover_rate": 200,
+      "speed_cap": 500,
+      "faster": 5,
+      "field_gamma": 0.95,
+      "round_max_step": 100,
+      "max_n": 3,
+      "team_0_color": "light red",
+      "team_1_color": "blue",
+      "vis": 320,
+      "vis_clear": 8
+    },
+    "obs_cfg": {
+      "minimap": false
+    },
+    "wall": {
+      "num": 4,
+      "objects": {
+        "component1": {
+          "initial_position": [
+            [
+              150,
+              100
+            ],
+            [
+              450,
+              100
+            ]
+          ],
+          "color": "black",
+          "width": 5
+        },
+        "component2": {
+          "initial_position": [
+            [
+              150,
+              100
+            ],
+            [
+              150,
+              700
+            ]
+          ],
+          "color": "black",
+          "width": 5
+        },
+        "component3": {
+          "initial_position": [
+            [
+              450,
+              100
+            ],
+            [
+              450,
+              700
+            ]
+          ],
+          "color": "black",
+          "width": 5
+        }
+      }
+    },
+    "arc": {
+      "num": 4,
+      "objects": {
+        "component1": {
+          "initial_position": [
+            250,450, 100,100
+          ],
+          "start_radian": 90,
+          "end_radian": -90,
+          "passable": "True",
+          "color": "red",
+          "collision_mode": 0,
+          "width": 20
+        },
+        "component2": {
+          "initial_position": [
+            250,450, 100,100
+          ],
+          "start_radian": -90,
+          "end_radian": 90,
+          "passable": "True",
+          "color": "red",
+          "collision_mode": 0,
+          "width": 20
+        },
+        "component3": {
+          "initial_position": [
+            200,400, 200,200
+          ],
+          "start_radian": 90,
+          "end_radian": -90,
+          "passable": "True",
+          "color": "sky blue",
+          "collision_mode": 0,
+          "width": 20
+        },
+        "component4": {
+          "initial_position": [
+            200,400, 200,200
+          ],
+          "start_radian": -90,
+          "end_radian": 90,
+          "passable": "True",
+          "color": "sky blue",
+          "collision_mode": 0,
+          "width": 20
+        }
+
+      }
+
+    },
+    "cross": {
+      "num": 1,
+      "objects": {
+        "component1": {
+          "initial_position": [
+            [
+              100,
+              350
+            ],
+            [
+              500,
+              350
+            ]
+          ],
+          "color": "red"
+        },
+        "component2": {
+          "initial_position": [
+            [
+              150,
+              500
+            ],
+            [
+              450,
+              500
+            ]
+          ],
+          "color": "grey"
+        },
+        "component3": {
+          "initial_position": [
+            [
+              300,
+              100
+            ],
+            [
+              300,
+              650
+            ]
+          ],
+          "color": "grey"
+        }
+      }
+    },
+    "agent": {
+      "num": 1,
+      "objects": {
+        "component1": {
+          "initial_position": [
+            300,
+            150
+          ],
+          "mass": 1,
+          "radius": 15,
+          "color": "light red",
+          "vis": 320,
+          "vis_clear": 8
         }
       }
     },

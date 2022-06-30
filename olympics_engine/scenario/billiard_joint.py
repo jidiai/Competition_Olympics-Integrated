@@ -48,6 +48,8 @@ class billiard_joint(OlympicsBase):
         self.cross_color = 'green'
         self.total_reward = 0
 
+        self.game_name = 'billiard'
+
     def reset(self):
         self.agent_num = 0
         self.agent_list = []
@@ -62,6 +64,18 @@ class billiard_joint(OlympicsBase):
 
         self.generate_map(self.map)
         self.merge_map()
+
+        agent2idx = {}
+        for idx, agent in enumerate(self.agent_list):
+            if agent.type == 'agent':
+                agent2idx[f'agent_{idx}'] = idx
+            elif agent.type == 'ball':
+                agent2idx[f'ball_{idx-2}'] = idx
+            else:
+                raise NotImplementedError
+        self.agent2idx = agent2idx
+
+
 
         self.set_seed()
         self.init_state()
@@ -82,6 +96,7 @@ class billiard_joint(OlympicsBase):
         self.pre_num = len(self.agent_list)-1
         self.team_score = [0, 0]
 
+        self.agent_energy = [self.agent_list[0].energy, self.agent_list[1].energy]
         # self.player1_n_hit = 1
         # self.player2_n_hit = 0
 
@@ -134,6 +149,10 @@ class billiard_joint(OlympicsBase):
 
     def check_overlap(self):
         pass
+
+    def _idx2agent(self, idx):
+        idx2agent = dict(zip(self.agent2idx.values(), self.agent2idx.keys()))
+        return idx2agent[idx]
 
     def check_action(self, action_list):
         action = []
@@ -197,6 +216,7 @@ class billiard_joint(OlympicsBase):
 
             new_boundary = self.get_obs_boundaray([random_init_pos_x, random_init_pos_y], 15, self.vis)
             self.obs_boundary_init.append(new_boundary)     #fixme: might has problem
+            self.obs_boundary.append(new_boundary)
             self.agent_num += 1
             self.agent_pos.append([random_init_pos_x, random_init_pos_y])
             self.agent_v.append([0,0])
@@ -205,47 +225,38 @@ class billiard_joint(OlympicsBase):
             self.agent_theta.append([init_obs])
             self.agent_record.append([random_init_pos_x, random_init_pos_y])
 
+            self.agent2idx[f'agent_{idx}'] = len(self.agent_list)-1
 
 
 
 
     def step(self, actions_list):
 
-
-
         input_action = self.check_action(actions_list)
-
         self.stepPhysics(input_action, self.step_cnt)
-
         self.cross_detect(self.agent_pos)
-
-        game_done = self.is_terminal()
-
-
-
-        self.step_cnt += 1
-
-
-        obs_next = self.get_obs()
-
-        self.change_inner_state()
-
-
-        # pre_ball_left = self.ball_left
-        self.clear_agent()
-
-
         self.output_reward = self._build_from_raw_reward()
-
-
-        #check overlapping
-        #self.check_overlap()
+        game_done = self.is_terminal()
 
         if not game_done:
             #reset white ball
             if np.logical_or(self.white_ball_in[0], self.white_ball_in[1]):
                 self.reset_cure_ball()
 
+        self.step_cnt += 1
+        obs_next = self.get_obs()
+
+        self.change_inner_state()
+        self.record_energy()
+        # pre_ball_left = self.ball_left
+        self.clear_agent()
+        # self.output_reward = self._build_from_raw_reward()
+
+
+        # if not game_done:
+        #     #reset white ball
+        #     if np.logical_or(self.white_ball_in[0], self.white_ball_in[1]):
+        #         self.reset_cure_ball()
 
 
 
@@ -288,6 +299,15 @@ class billiard_joint(OlympicsBase):
 
                 return all_object_stop, None
 
+    def record_energy(self):
+        for i,j in enumerate(self.agent_list):
+            if j.type == 'agent':
+                if j.color == self.agent1_color:
+                    idx = 0
+                elif j.color == self.agent2_color:
+                    idx = 1
+
+                self.agent_energy[idx] = j.energy
 
 
 
@@ -327,7 +347,7 @@ class billiard_joint(OlympicsBase):
                             elif agent.color == self.agent2_color:
                                 self.white_ball_in[1] = True
 
-                        agent.color = self.cross_color
+                        # agent.color = self.cross_color
                         agent.finished = True
                         agent.alive = False
                         self.dead_agent_list.append(agent_idx)
@@ -351,6 +371,7 @@ class billiard_joint(OlympicsBase):
                     self.ball_left[1] -= 1
                     self.score[1] += 1
                     # self.green_ball_left -= 1
+                self.agent2idx[self._idx2agent(idx-index_add_on)] = None
             #     pass
             # else:
             del self.agent_list[idx-index_add_on]
@@ -361,6 +382,11 @@ class billiard_joint(OlympicsBase):
             del self.obs_boundary_init[idx-index_add_on]
             del self.obs_boundary[idx-index_add_on]
             del self.obs_list[idx-index_add_on]
+
+            # self.agent2idx[self._idx2agent(idx-index_add_on)] = None
+            for name, id in self.agent2idx.items():
+                if id is not None and id > (idx-index_add_on):
+                    self.agent2idx[name] = id-1
 
             index_add_on += 1
         self.agent_num -= len(self.dead_agent_list)
@@ -411,8 +437,27 @@ class billiard_joint(OlympicsBase):
         self.total_score[0] += reward[0]
         self.total_score[1] += reward[1]
 
+        if self.is_terminal():
+            winner = self.check_win()
+            if winner == '0':
+                reward[0] += 100
+            elif winner == '1':
+                reward[1] += 100
+
+
+        reward[0] /= 100
+        reward[1] /= 100
+
         return reward
 
+    def check_win(self):
+        total_reward = self.total_score
+        if total_reward[0]>total_reward[1]:
+            return '0'
+        elif total_reward[0]<total_reward[1]:
+            return '1'
+        else:
+            return '-1'
 
 
     def get_round_reward(self):
@@ -434,7 +479,7 @@ class billiard_joint(OlympicsBase):
         #step_reward = self.get_reward()
         # round_reawrd = self.get_round_reward()      #move it to if not done?
         return step_reward
-        _output_reward = {}
+        # _output_reward = {}
         # _output_reward[f"team_{self.current_team}"] = {"step_reward": step_reward, "round_reward": round_reawrd}
         # _output_reward[f"team_{1-self.current_team}"] = None
         # self.team_score[self.current_team] += round_reawrd['total'] if round_reawrd is not None else 0
@@ -484,7 +529,9 @@ class billiard_joint(OlympicsBase):
 
         if self.draw_obs:
             if len(self.obs_list) > 0:
-                self.viewer.draw_view(self.obs_list, self.agent_list, leftmost_x=500, upmost_y=10, gap = 100)
+                obs_list, agent_list = self.align_obs()
+                self.viewer.draw_view(obs_list, agent_list, leftmost_x=500, upmost_y=10, gap=100)
+                # self.viewer.draw_view(self.obs_list, self.agent_list, leftmost_x=500, upmost_y=10, gap = 100)
 
         if self.show_traj:
             self.get_trajectory()
@@ -513,6 +560,22 @@ class billiard_joint(OlympicsBase):
             if event.type == pygame.QUIT:
                 sys.exit()
         pygame.display.flip()
+
+    def align_obs(self):
+        obs_list = [0,0] #self.obs_list
+        agent_list = [0,0] #self.agent_list
+
+        for i,j in enumerate(self.agent_list):
+            if j.type == 'agent':
+                if j.color == self.agent1_color:
+                    idx = 0
+                elif j.color == self.agent2_color:
+                    idx = 1
+
+                obs_list[idx] = self.obs_list[i]
+                agent_list[idx] = self.agent_list[i]
+
+        return obs_list, agent_list
 
 
     def draw_table(self):
